@@ -1,0 +1,41 @@
+{
+  "name": "HRD Leave Management System",
+  "short_name": "HRD Dashboard",
+  "description": "Sistem manajemen cuti dan absensi karyawan JPC",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0a0f",
+  "theme_color": "#c0392b",
+  "lang": "id",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/c0392b/ffffff?text=HRD",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/c0392b/ffffff?text=HRD",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Buka halaman utama",
+      "url": "/?page=dashboard"
+    },
+    {
+      "name": "Absensi",
+      "short_name": "Absensi",
+      "description": "Input absensi hari ini",
+      "url": "/?page=attendance"
+    }
+  ]
+}
