@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -1544,7 +1545,7 @@ function exportFullReport() {
 function openGSheetModal(target) {
   currentGSheetTarget = target;
   document.getElementById('gsheet-modal').classList.add('open');
-  const url = localStorage.getItem('gsheet_url') || '';
+  const url = localStorage.getItem('gsheet_url') || 'https://script.google.com/macros/s/AKfycbxXn6X64vGZG0YpZHHqSvLbbENHEDwQSviAoQu3h_Z4mhjXLrHqR13BhTSCeqss5Nw7/exec';
   document.getElementById('gsheet-url').value = url;
   // Auto-set nama sheet berdasarkan target + bulan
   const today = new Date();
@@ -1584,15 +1585,17 @@ function nowStamp() {
   return d.toLocaleString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
 }
 
+const GSHEET_DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbxXn6X64vGZG0YpZHHqSvLbbENHEDwQSviAoQu3h_Z4mhjXLrHqR13BhTSCeqss5Nw7/exec';
 async function sendToGSheet() {
   const url = document.getElementById('gsheet-url').value.trim();
   const sheetName = document.getElementById('gsheet-sheetname').value.trim() || 'Sheet1';
   const mode = document.querySelector('input[name="gs-mode"]:checked')?.value || 'append';
-  if (!url) { showToast('❌ Masukkan URL Web App!', true); return; }
-  if (!url.startsWith('https://script.google.com/macros/s/')) {
+  const finalUrl = url || GSHEET_DEFAULT_URL;
+  if (!finalUrl) { showToast('❌ Masukkan URL Web App!', true); return; }
+  if (!finalUrl.startsWith('https://script.google.com/macros/s/')) {
     showToast('❌ URL tidak valid. Harus diawali https://script.google.com/macros/s/...', true); return;
   }
-  localStorage.setItem('gsheet_url', url);
+  localStorage.setItem('gsheet_url', finalUrl);
   const ts = nowStamp();
 
   let data = [];
@@ -1636,7 +1639,7 @@ async function sendToGSheet() {
 
     // Kirim via no-cors (Apps Script tidak support CORS dari browser langsung)
     // Tapi kita tetap bisa kirim POST — responsenya opaque tapi data tetap masuk
-    await fetch(url, {
+    await fetch(finalUrl, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain' },
