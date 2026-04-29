@@ -287,11 +287,11 @@
       <div class="logo-title">&#9670; JPC HRD SYSTEM</div>
       <div class="logo-sub">Leave &amp; Attendance Management</div>
     </div>
-    <div class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon">&#9632;</span> Dashboard</div>
-    <div class="nav-item" onclick="showPage('employees')"><span class="nav-icon">&#9650;</span> Data Karyawan</div>
-    <div class="nav-item" onclick="showPage('attendance')"><span class="nav-icon">&#9670;</span> Absensi</div>
-    <div class="nav-item" onclick="showPage('reports')"><span class="nav-icon">&#9676;</span> Laporan &amp; Chart</div>
-    <div class="nav-item" onclick="showPage('monthly')"><span class="nav-icon">&#128200;</span> Kehadiran Bulanan</div>
+    <div class="nav-item active" onclick="showPage('dashboard', this)"><span class="nav-icon">&#9632;</span> Dashboard</div>
+    <div class="nav-item" onclick="showPage('employees', this)"><span class="nav-icon">&#9650;</span> Data Karyawan</div>
+    <div class="nav-item" onclick="showPage('attendance', this)"><span class="nav-icon">&#9670;</span> Absensi</div>
+    <div class="nav-item" onclick="showPage('reports', this)"><span class="nav-icon">&#9676;</span> Laporan &amp; Chart</div>
+    <div class="nav-item" onclick="showPage('monthly', this)"><span class="nav-icon">&#128200;</span> Kehadiran Bulanan</div>
   </div>
   <!-- Main -->
   <div class="main">
@@ -729,7 +729,8 @@
     <!-- Tab navigasi -->
     <div style="display:flex;gap:4px;margin-bottom:14px;background:#0a0a0f;border-radius:8px;padding:4px;">
       <button id="gs-tab-send" onclick="gsTab('send')" style="flex:1;padding:7px;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;background:#4fc3f7;color:#000;transition:all 0.2s;">🚀 Kirim Data</button>
-      <button id="gs-tab-script" onclick="gsTab('script')" style="flex:1;padding:7px;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:#5a6278;transition:all 0.2s;">📜 Script Apps Script</button>
+      <button id="gs-tab-load" onclick="gsTab('load')" style="flex:1;padding:7px;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:#5a6278;transition:all 0.2s;">📥 Load Data</button>
+      <button id="gs-tab-script" onclick="gsTab('script')" style="flex:1;padding:7px;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:#5a6278;transition:all 0.2s;">📜 Script</button>
     </div>
 
     <!-- Panel: Kirim Data -->
@@ -766,6 +767,41 @@
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
         <button class="btn-save btn-save-gsheet" onclick="sendToGSheet()" style="flex:1;">🚀 Kirim Sekarang</button>
+        <button class="modal-close" onclick="closeGSheetModal()" style="border-color:#4fc3f7;color:#4fc3f7;">Batal</button>
+      </div>
+    </div>
+
+    <!-- Panel: Load Data -->
+    <div id="gs-panel-load" style="display:none;">
+      <div class="gsheet-info" style="margin-bottom:12px;background:rgba(0,230,118,0.06);border-color:rgba(0,230,118,0.3);">
+        <strong style="color:#00e676;">📥 Load & Sinkronisasi Data dari Google Sheet</strong><br>
+        <span style="color:#9ca3af;">Data dari Google Sheet akan <b style="color:#fff;">menggantikan</b> data lokal browser ini. Gunakan ini untuk sinkronisasi antar laptop/device.</span>
+      </div>
+      <div class="field" style="margin-bottom:10px;">
+        <label>URL Web App Google Apps Script</label>
+        <input type="text" id="gsheet-url-load" placeholder="https://script.google.com/macros/s/..." style="width:100%;background:#0a0a0f;border:1px solid rgba(0,230,118,0.3);border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;outline:none;">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+        <div class="field">
+          <label style="font-size:11px;">Sheet Data Karyawan</label>
+          <input type="text" id="load-sheet-emp" value="Roster_Karyawan" style="width:100%;background:#0a0a0f;border:1px solid rgba(0,230,118,0.2);border-radius:8px;padding:8px 10px;color:#fff;font-size:12px;outline:none;">
+        </div>
+        <div class="field">
+          <label style="font-size:11px;">Sheet Absensi</label>
+          <input type="text" id="load-sheet-att" value="Absensi" style="width:100%;background:#0a0a0f;border:1px solid rgba(0,230,118,0.2);border-radius:8px;padding:8px 10px;color:#fff;font-size:12px;outline:none;">
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:8px 14px;border-radius:8px;border:1px solid rgba(0,230,118,0.4);background:rgba(0,230,118,0.08);flex:1;">
+          <input type="checkbox" id="load-emp" checked style="accent-color:#00e676;"> <span style="color:#00e676;font-size:12px;font-weight:700;">👤 Data Karyawan</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:8px 14px;border-radius:8px;border:1px solid rgba(79,195,247,0.4);background:rgba(79,195,247,0.08);flex:1;">
+          <input type="checkbox" id="load-att" checked style="accent-color:#4fc3f7;"> <span style="color:#4fc3f7;font-size:12px;font-weight:700;">📋 Data Absensi</span>
+        </label>
+      </div>
+      <div id="load-status" style="display:none;padding:10px 12px;border-radius:8px;font-size:12px;margin-bottom:10px;"></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-save" onclick="loadFromGSheet()" style="flex:1;background:linear-gradient(135deg,#1e8449,#145a32);border:1px solid rgba(0,230,118,0.4);">📥 Load Sekarang</button>
         <button class="modal-close" onclick="closeGSheetModal()" style="border-color:#4fc3f7;color:#4fc3f7;">Batal</button>
       </div>
     </div>
@@ -838,9 +874,37 @@ function doPost(e) {
 }
 
 function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({status:'ready', msg:'HRD Dashboard API aktif'}))
-    .setMimeType(ContentService.MimeType.JSON);
+  try {
+    var action    = (e.parameter && e.parameter.action) ? e.parameter.action : 'ping';
+    var sheetName = (e.parameter && e.parameter.sheet)  ? e.parameter.sheet  : 'Sheet1';
+    if (action === 'read') {
+      var ss    = SpreadsheetApp.getActiveSpreadsheet();
+      var sheet = ss.getSheetByName(sheetName);
+      if (!sheet) {
+        return ContentService
+          .createTextOutput(JSON.stringify({status:'error', message:'Sheet "'+sheetName+'" tidak ditemukan. Cek nama sheet di Google Sheet Anda.'}))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+      var lastRow = sheet.getLastRow();
+      var lastCol = sheet.getLastColumn();
+      if (lastRow < 1 || lastCol < 1) {
+        return ContentService
+          .createTextOutput(JSON.stringify({status:'ok', rows:[], sheet:sheetName}))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+      var rows = sheet.getRange(1, 1, lastRow, lastCol).getValues();
+      return ContentService
+        .createTextOutput(JSON.stringify({status:'ok', rows:rows, sheet:sheetName, count:rows.length-1}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    return ContentService
+      .createTextOutput(JSON.stringify({status:'ready', msg:'HRD Dashboard API aktif — gunakan ?action=read&sheet=NamaSheet untuk baca data'}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({status:'error', message:err.message}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }</pre>
       </div>
       <div style="margin-top:10px;display:flex;gap:8px;">
@@ -1023,6 +1087,14 @@ const MANPOWER_LIST = [
 let employees = JSON.parse(localStorage.getItem('hrd_employees') || '[]');
 let attendance = JSON.parse(localStorage.getItem('hrd_attendance') || '[]');
 let currentGSheetTarget = 'employees';
+let currentPage = 'dashboard';
+function renderPage(p) {
+  if (p==='dashboard') renderDashboard();
+  else if (p==='employees') renderEmployees();
+  else if (p==='attendance') renderAttendance();
+  else if (p==='reports') renderReports();
+  else if (p==='monthly') initMonthlyPage();
+}
 
 const LEVEL_MAP = {
   'Operator':'karyawan','Mekanik':'karyawan','Helper':'karyawan','Elektrik':'karyawan',
@@ -1084,11 +1156,13 @@ function showToast(msg, isError=false) {
 }
 
 // ========== NAVIGATION ==========
-function showPage(p) {
+function showPage(p, el) {
+  currentPage = p;
   document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
   document.getElementById('page-' + p).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
-  event.target.closest('.nav-item').classList.add('active');
+  const navEl = el ? el.closest('.nav-item') : document.querySelector(`.nav-item[onclick*="'${p}'"]`);
+  if (navEl) navEl.classList.add('active');
   if (p === 'dashboard') renderDashboard();
   if (p === 'employees') renderEmployees();
   if (p === 'attendance') renderAttendance();
@@ -1559,12 +1633,88 @@ function closeGSheetModal() {
 }
 function gsTab(tab) {
   document.getElementById('gs-panel-send').style.display   = tab==='send'   ? '' : 'none';
+  document.getElementById('gs-panel-load').style.display   = tab==='load'   ? '' : 'none';
   document.getElementById('gs-panel-script').style.display = tab==='script' ? '' : 'none';
-  document.getElementById('gs-tab-send').style.background   = tab==='send'   ? '#4fc3f7' : 'transparent';
-  document.getElementById('gs-tab-send').style.color        = tab==='send'   ? '#000'    : '#5a6278';
-  document.getElementById('gs-tab-script').style.background = tab==='script' ? '#4fc3f7' : 'transparent';
-  document.getElementById('gs-tab-script').style.color      = tab==='script' ? '#000'    : '#5a6278';
+  const colors = { send:'#4fc3f7', load:'#00e676', script:'#f39c12' };
+  ['send','load','script'].forEach(t => {
+    const btn = document.getElementById('gs-tab-'+t);
+    if (!btn) return;
+    btn.style.background = t===tab ? colors[t] : 'transparent';
+    btn.style.color = t===tab ? '#000' : '#5a6278';
+  });
+  const url = document.getElementById('gsheet-url').value;
+  if (url && document.getElementById('gsheet-url-load')) {
+    document.getElementById('gsheet-url-load').value = url;
+  }
 }
+async function loadFromGSheet() {
+  const GSURL = document.getElementById('gsheet-url-load').value.trim() ||
+                document.getElementById('gsheet-url').value.trim() ||
+                'https://script.google.com/macros/s/AKfycbxXn6X64vGZG0YpZHHqSvLbbENHEDwQSviAoQu3h_Z4mhjXLrHqR13BhTSCeqss5Nw7/exec';
+  const sheetEmp = document.getElementById('load-sheet-emp').value.trim() || 'Roster_Karyawan';
+  const sheetAtt = document.getElementById('load-sheet-att').value.trim() || 'Absensi';
+  const doEmp = document.getElementById('load-emp').checked;
+  const doAtt = document.getElementById('load-att').checked;
+  if (!doEmp && !doAtt) { showToast('❌ Pilih minimal satu data!', true); return; }
+
+  const statusEl = document.getElementById('load-status');
+  const setStatus = (msg, color) => {
+    statusEl.style.display = '';
+    statusEl.style.background = `rgba(${color},0.1)`;
+    statusEl.style.border = `1px solid rgba(${color},0.3)`;
+    statusEl.style.color = `rgb(${color})`;
+    statusEl.innerHTML = msg;
+  };
+  setStatus('⏳ Mengambil data dari Google Sheet...', '79,195,247');
+
+  let loadedEmp = 0, loadedAtt = 0, errors = [];
+  try {
+    if (doEmp) {
+      const res  = await fetch(`${GSURL}?action=read&sheet=${encodeURIComponent(sheetEmp)}&t=${Date.now()}`);
+      const json = await res.json();
+      if (json.status === 'ok' && json.rows && json.rows.length > 1) {
+        const parsed = json.rows.slice(1).map((r,i) => ({
+          id: Date.now()+i,
+          noreg: String(r[2]||''),
+          name: String(r[3]||''),
+          position: String(r[4]||''),
+          roster: String(r[6]||'').toLowerCase()==='cuti'?'cuti':'kerja',
+          startDate: String(r[7]||''),
+          dept: String(r[1]||''),
+        })).filter(e=>e.name);
+        if (parsed.length) { employees=parsed; localStorage.setItem('employees',JSON.stringify(employees)); loadedEmp=parsed.length; }
+        else errors.push('Karyawan: tidak ada baris valid');
+      } else errors.push('Karyawan: '+(json.message||'gagal baca — cek nama sheet'));
+    }
+    if (doAtt) {
+      const res  = await fetch(`${GSURL}?action=read&sheet=${encodeURIComponent(sheetAtt)}&t=${Date.now()}`);
+      const json = await res.json();
+      if (json.status === 'ok' && json.rows && json.rows.length > 1) {
+        const parsed = json.rows.slice(1).map((r,i) => ({
+          id: Date.now()+i,
+          date: String(r[1]||''),
+          noreg: String(r[2]||''),
+          nama: String(r[3]||''),
+          status: String(r[4]||'Hadir'),
+          keterangan: String(r[5]||''),
+          attId: 'mp_'+String(r[2]||'').replace(/\s/g,'_'),
+        })).filter(a=>a.date&&a.nama);
+        if (parsed.length) { attendance=parsed; localStorage.setItem('attendance',JSON.stringify(attendance)); loadedAtt=parsed.length; }
+        else errors.push('Absensi: tidak ada baris valid');
+      } else errors.push('Absensi: '+(json.message||'gagal baca — cek nama sheet'));
+    }
+
+    if (!errors.length) {
+      setStatus(`✅ Berhasil! ${loadedEmp?loadedEmp+' karyawan':''} ${loadedAtt?loadedAtt+' absensi':''} berhasil disinkronkan.`, '0,230,118');
+      setTimeout(()=>{ closeGSheetModal(); renderPage(currentPage||'dashboard'); showToast('✅ Data berhasil disinkronkan!'); }, 1500);
+    } else {
+      setStatus('⚠️ '+errors.join(' | ')+'<br><small style="opacity:0.7">Pastikan nama sheet benar & Apps Script sudah diupdate ke versi terbaru.</small>', '255,107,107');
+    }
+  } catch(err) {
+    setStatus('❌ '+err.message+'<br><small style="opacity:0.7">Pastikan Apps Script sudah diupdate dengan fungsi doGet terbaru.</small>', '255,107,107');
+  }
+}
+
 function copyGScript() {
   const txt = document.getElementById('gs-script-code').textContent;
   navigator.clipboard.writeText(txt).then(()=>showToast('✅ Script berhasil dicopy!')).catch(()=>{
