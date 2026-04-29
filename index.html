@@ -15,62 +15,69 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0a0a0f; color: #e0e0e0; font-family: 'Barlow Condensed', 'Segoe UI', sans-serif; min-height: 100vh; }
+  body { background: #f0f2f7; color: #1a2744; font-family: 'Plus Jakarta Sans', 'DM Sans', sans-serif; min-height: 100vh; }
   :root {
-    --orange: #ff6b00;
-    --orange-light: #ff9500;
-    --orange-dim: rgba(255,107,0,0.12);
-    --orange-border: rgba(255,107,0,0.3);
-    --bg-main: #0a0a0f;
-    --bg-card: #111118;
-    --bg-card2: #0e0e14;
-    --bg-card3: #16161f;
-    --text-bright: #ffffff;
-    --text-muted: #5a6278;
-    --text-label: #8892a4;
-    --green: #00e676;
-    --red: #ff4136;
+    --navy: #003d7a;
+    --navy-dark: #002558;
+    --navy-light: #0056a8;
+    --gold: #f5a623;
+    --gold-light: #f7bc5a;
+    --gold-dark: #d4891a;
+    --orange: #f5a623;
+    --orange-light: #f7bc5a;
+    --orange-dim: rgba(245,166,35,0.12);
+    --orange-border: rgba(245,166,35,0.3);
+    --bg-main: #f0f2f7;
+    --bg-card: #ffffff;
+    --bg-card2: #f8f9fc;
+    --bg-card3: #eef1f8;
+    --text-bright: #1a2744;
+    --text-muted: #7a8ba8;
+    --text-label: #4a5a78;
+    --green: #00875a;
+    --red: #d32f2f;
     --red2: #c0392b;
-    --yellow: #f39c12;
-    --purple: #7c3aed;
+    --yellow: #f5a623;
+    --purple: #6c3aed;
     --purple-light: #a78bfa;
-    --blue: #00b4d8;
-    --blue2: #4fc3f7;
-    --pink: #f472b6;
-    --teal: #14b8a6;
-    --sidebar-bg: #07070d;
-    --sidebar-active: #c0392b;
-    --topbar-bg: #07070d;
-    --card-border: rgba(255,255,255,0.05);
-    --card-glow: rgba(192,57,43,0.08);
-
-    /* KPI card colors matching photo */
+    --blue: #0056a8;
+    --blue2: #4a90d9;
+    --pink: #e91e8c;
+    --teal: #00897b;
+    --sidebar-bg: #002558;
+    --sidebar-active: #f5a623;
+    --topbar-bg: #003d7a;
+    --card-border: rgba(0,61,122,0.1);
+    --card-glow: rgba(0,61,122,0.06);
     --kpi-red: #c0392b;
     --kpi-orange: #e67e22;
-    --kpi-green: #1a7a3c;
-    --kpi-yellow: #7a6a00;
-    --kpi-blue: #1a5276;
-    --kpi-teal: #0e6655;
+    --kpi-green: #00875a;
+    --kpi-yellow: #d4891a;
+    --kpi-blue: #003d7a;
+    --kpi-teal: #00897b;
   }
   .running-text-wrap {
     overflow: hidden;
-    background: linear-gradient(90deg, #0d0003 0%, #080002 50%, #0d0003 100%);
-    border-top: 1px solid rgba(192,57,43,0.5);
-    border-bottom: 1px solid rgba(192,57,43,0.5);
+    background: linear-gradient(90deg, #002558 0%, #003d7a 50%, #002558 100%);
+    border-top: 2px solid var(--gold);
+    border-bottom: 2px solid var(--gold);
     padding: 6px 0;
     white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 98;
   }
   .running-text {
     display: inline-block;
     animation: marquee 22s linear infinite;
-    color: #e74c3c;
+    color: var(--gold-light);
     font-size: 12px;
     font-weight: 800;
     letter-spacing: 2px;
     text-transform: uppercase;
-    text-shadow: 0 0 10px #c0392b, 0 0 24px #e74c3c, 0 0 40px rgba(192,57,43,0.5);
+    text-shadow: 0 0 10px rgba(245,166,35,0.5);
     white-space: nowrap;
     padding-left: 100%;
   }
@@ -79,85 +86,86 @@
     100% { transform: translateX(-200%); }
   }
   .app { display: flex; min-height: 100vh; }
-  /* Sidebar */
-  .sidebar { width: 210px; background: var(--sidebar-bg); border-right: 1px solid rgba(255,255,255,0.04); padding: 0; flex-shrink: 0; display: flex; flex-direction: column; }
-  .logo { padding: 18px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); background: #050508; }
-  .logo-title { font-size: 15px; font-weight: 800; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
-  .logo-sub { font-size: 9px; color: var(--text-muted); margin-top: 3px; letter-spacing: 0.5px; text-transform: uppercase; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; cursor: pointer; font-size: 12px; color: var(--text-muted); transition: all 0.2s; border-left: 3px solid transparent; background: transparent; margin: 1px 0; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
-  .nav-item:hover { color: #fff; background: rgba(255,255,255,0.04); border-left-color: rgba(255,255,255,0.15); }
-  .nav-item.active { color: #fff !important; background: var(--sidebar-active) !important; border-left-color: #ff8a80 !important; font-weight: 700; box-shadow: 0 0 20px rgba(192,57,43,0.3); }
-  .nav-item.active .nav-icon { color: #fff; }
-  .nav-icon { font-size: 15px; width: 18px; text-align: center; }
-  /* Main */
-  .main { flex: 1; overflow-x: hidden; background: var(--bg-main); }
-  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: var(--topbar-bg); border-bottom: 1px solid rgba(255,255,255,0.05); flex-direction: column; align-items: stretch; gap: 0; }
-  .topbar-title { font-size: 16px; font-weight: 800; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
-  .topbar-info { font-size: 11px; color: var(--text-muted); }
-  .clock { font-size: 12px; color: var(--blue2); font-weight: 600; }
+  /* Sidebar - fixed tidak ikut scroll */
+  .sidebar { width: 220px; background: var(--sidebar-bg); border-right: none; padding: 0; flex-shrink: 0; display: flex; flex-direction: column; box-shadow: 4px 0 20px rgba(0,37,88,0.15); position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; overflow-y: auto; }
+  .sidebar::-webkit-scrollbar { width: 3px; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius:2px; }
+  .logo { padding: 20px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); background: var(--navy-dark); }
+  .logo-title { font-size: 16px; font-weight: 800; color: var(--navy); letter-spacing: 0.5px; }
+  .logo-sub { font-size: 9px; color: rgba(255,255,255,0.5); margin-top: 3px; letter-spacing: 1px; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 12px 18px; cursor: pointer; font-size: 12px; color: rgba(255,255,255,0.65); transition: all 0.2s; border-left: 3px solid transparent; background: transparent; margin: 1px 0; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; }
+  .nav-item:hover { color: #fff; background: rgba(255,255,255,0.08); border-left-color: rgba(255,255,255,0.4); }
+  .nav-item.active { color: var(--navy-dark) !important; background: var(--gold) !important; border-left-color: var(--gold-dark) !important; font-weight: 700; box-shadow: 0 2px 12px rgba(245,166,35,0.4); }
+  .nav-item.active .nav-icon { color: var(--navy-dark); }
+  .nav-icon { font-size: 14px; width: 18px; text-align: center; }
+  /* Main - offset sidebar, topbar sticky */
+  .main { flex: 1; overflow-x: hidden; background: var(--bg-main); margin-left: 220px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 0 28px; background: var(--topbar-bg); border-bottom: 3px solid var(--gold); flex-direction: column; align-items: stretch; gap: 0; box-shadow: 0 2px 12px rgba(0,37,88,0.2); position: sticky; top: 0; z-index: 99; }
+  .topbar-title { font-size: 15px; font-weight: 800; color: var(--navy); letter-spacing: 1px; text-transform: uppercase; }
+  .topbar-info { font-size: 11px; color: rgba(0,37,88,0.6); }
+  .clock { font-size: 12px; color: var(--gold-light); font-weight: 700; }
   /* Tabs */
   .tabs { display: flex; gap: 4px; padding: 16px 24px 0; border-bottom: 1px solid var(--card-border); }
   .tab { padding: 10px 20px; cursor: pointer; font-size: 13px; color: var(--text-muted); border-bottom: 2px solid transparent; transition: all 0.2s; }
-  .tab:hover { color: #fff; }
-  .tab.active { color: #fff; border-bottom-color: var(--sidebar-active); font-weight: 600; }
+  .tab:hover { color: var(--navy); }
+  .tab.active { color: var(--navy); border-bottom-color: var(--sidebar-active); font-weight: 600; }
   /* Content */
   .content { padding: 24px; }
-  /* Stats row - KPI style colored cards like photo */
-  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
-  .stat-card { border-radius: 12px; padding: 18px 16px; text-align: left; transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden; cursor: default; }
-  .stat-card::after { content:''; position:absolute; bottom:-20px; right:-20px; width:80px; height:80px; border-radius:50%; background:rgba(255,255,255,0.06); }
-  .stat-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.5); }
+  /* Stats row - KPI style colored cards */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat-card { border-radius: 12px; padding: 20px 18px; text-align: left; transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden; cursor: default; }
+  .stat-card::after { content:''; position:absolute; bottom:-20px; right:-20px; width:80px; height:80px; border-radius:50%; background:rgba(255,255,255,0.08); }
+  .stat-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,37,88,0.2); }
   .stat-card .stat-icon { font-size: 22px; margin-bottom: 8px; opacity: 0.9; display: block; }
-  .stat-card .stat-label { font-size: 12px; color: rgba(255,255,255,0.8); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; }
-  .stat-card .stat-num { font-size: 52px; font-weight: 800; color: #fff; line-height: 1; font-family: 'Barlow Condensed', sans-serif; }
+  .stat-card .stat-label { font-size: 11px; color: rgba(255,255,255,0.85); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: block; }
+  .stat-card .stat-num { font-size: 48px; font-weight: 800; color: var(--navy); line-height: 1; font-family: 'Plus Jakarta Sans', sans-serif; }
   .stat-card .stat-sub { font-size: 10px; color: rgba(255,255,255,0.65); margin-top: 6px; font-weight: 500; }
-  /* KPI card color variants */
-  .stat-card-red    { background: linear-gradient(135deg, #c0392b 0%, #922b21 100%); border: 1px solid rgba(192,57,43,0.4); }
-  .stat-card-orange { background: linear-gradient(135deg, #e67e22 0%, #a04000 100%); border: 1px solid rgba(230,126,34,0.4); }
-  .stat-card-green  { background: linear-gradient(135deg, #1e8449 0%, #145a32 100%); border: 1px solid rgba(30,132,73,0.4); }
-  .stat-card-yellow { background: linear-gradient(135deg, #d4ac0d 0%, #9a7d0a 100%); border: 1px solid rgba(212,172,13,0.4); }
-  .stat-card-blue   { background: linear-gradient(135deg, #1a5276 0%, #0e2d44 100%); border: 1px solid rgba(26,82,118,0.4); }
-  .stat-card-teal   { background: linear-gradient(135deg, #0e6655 0%, #07403a 100%); border: 1px solid rgba(14,102,85,0.4); }
-  .stat-card-purple { background: linear-gradient(135deg, #6c3483 0%, #4a235a 100%); border: 1px solid rgba(108,52,131,0.4); }
-  .stat-card-crimson{ background: linear-gradient(135deg, #943126 0%, #641e16 100%); border: 1px solid rgba(148,49,38,0.4); }
+  .stat-card-red    { background: linear-gradient(135deg, #c0392b 0%, #922b21 100%); box-shadow: 0 4px 15px rgba(192,57,43,0.3); }
+  .stat-card-orange { background: linear-gradient(135deg, #003d7a 0%, #002558 100%); box-shadow: 0 4px 15px rgba(0,61,122,0.3); }
+  .stat-card-green  { background: linear-gradient(135deg, #00875a 0%, #005c3d 100%); box-shadow: 0 4px 15px rgba(0,135,90,0.3); }
+  .stat-card-yellow { background: linear-gradient(135deg, #f5a623 0%, #d4891a 100%); box-shadow: 0 4px 15px rgba(245,166,35,0.3); }
+  .stat-card-blue   { background: linear-gradient(135deg, #0056a8 0%, #003d7a 100%); box-shadow: 0 4px 15px rgba(0,86,168,0.3); }
+  .stat-card-teal   { background: linear-gradient(135deg, #00897b 0%, #005f56 100%); box-shadow: 0 4px 15px rgba(0,137,123,0.3); }
+  .stat-card-purple { background: linear-gradient(135deg, #6c3483 0%, #4a235a 100%); box-shadow: 0 4px 15px rgba(108,52,131,0.3); }
+  .stat-card-crimson{ background: linear-gradient(135deg, #943126 0%, #641e16 100%); box-shadow: 0 4px 15px rgba(148,49,38,0.3); }
   /* Form card */
-  .form-card { background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-  .form-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .form-card { background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,37,88,0.06); }
+  .form-title { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; }
   .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 12px; align-items: end; }
   .field { display: flex; flex-direction: column; gap: 6px; }
-  .field label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
-  .field input, .field select { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); border-radius: 8px; padding: 10px 12px; color: #fff; font-size: 13px; outline: none; transition: border 0.2s; }
-  .field input:focus, .field select:focus { border-color: var(--sidebar-active); }
-  .field select option { background: #111; }
-  .btn-add { background: var(--sidebar-active); border: none; border-radius: 8px; padding: 10px 20px; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-  .btn-add:hover { background: #ff6659; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(229,57,53,0.4); }
+  .field label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; }
+  .field input, .field select { background: #fff; border: 1px solid rgba(0,61,122,0.2); border-radius: 8px; padding: 10px 12px; color: var(--navy); font-size: 13px; outline: none; transition: border 0.2s; font-family: inherit; }
+  .field input:focus, .field select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(0,61,122,0.1); }
+  .field select option { background: #fff; color: var(--navy); }
+  .btn-add { background: var(--navy); border: none; border-radius: 8px; padding: 10px 20px; color: var(--navy); font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s; white-space: nowrap; font-family: inherit; }
+  .btn-add:hover { background: var(--navy-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,37,88,0.3); }
   /* Save buttons bar */
-  .save-bar { display: flex; gap: 10px; align-items: center; padding: 14px 20px; background: var(--bg-card2); border: 1px solid var(--card-border); border-radius: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-  .save-bar-title { font-size: 12px; color: var(--text-muted); margin-right: 4px; white-space: nowrap; }
-  .btn-save { display: flex; align-items: center; gap: 7px; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
-  .btn-save:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.4); }
-  .btn-save-local { background: rgba(255,140,0,0.2); border: 1px solid var(--orange); color: var(--orange); }
-  .btn-save-local:hover { background: rgba(255,140,0,0.35); }
-  .btn-save-excel { background: rgba(0,180,70,0.2); border: 1px solid #00b446; color: #00e676; }
-  .btn-save-excel:hover { background: rgba(0,180,70,0.35); }
-  .btn-save-gsheet { background: rgba(79,195,247,0.15); border: 1px solid #4fc3f7; color: #4fc3f7; }
-  .btn-save-gsheet:hover { background: rgba(79,195,247,0.3); }
-  .btn-save-att-excel { background: rgba(255,215,0,0.15); border: 1px solid #ffd700; color: #ffd700; }
-  .btn-save-att-excel:hover { background: rgba(255,215,0,0.3); }
+  .save-bar { display: flex; gap: 10px; align-items: center; padding: 14px 20px; background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; margin-bottom: 20px; flex-wrap: wrap; box-shadow: 0 2px 8px rgba(0,37,88,0.06); }
+  .save-bar-title { font-size: 12px; color: var(--text-muted); margin-right: 4px; white-space: nowrap; font-weight: 600; }
+  .btn-save { display: flex; align-items: center; gap: 7px; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; font-family: inherit; }
+  .btn-save:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,37,88,0.2); }
+  .btn-save-local { background: rgba(0,61,122,0.08); border: 1px solid rgba(0,61,122,0.25); color: var(--navy); }
+  .btn-save-local:hover { background: rgba(0,61,122,0.15); }
+  .btn-save-excel { background: rgba(0,135,90,0.1); border: 1px solid var(--green); color: var(--green); }
+  .btn-save-excel:hover { background: rgba(0,135,90,0.2); }
+  .btn-save-gsheet { background: var(--gold); border: 1px solid var(--gold-dark); color: var(--navy-dark); font-weight: 700; }
+  .btn-save-gsheet:hover { background: var(--gold-dark); }
+  .btn-save-att-excel { background: rgba(0,61,122,0.08); border: 1px solid rgba(0,61,122,0.25); color: var(--navy); }
+  .btn-save-att-excel:hover { background: rgba(0,61,122,0.15); }
   .save-icon { font-size: 16px; }
   /* Employee table */
-  .table-card { background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
-  .table-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--card-border); flex-wrap: wrap; gap: 8px; background: rgba(255,255,255,0.02); }
-  .table-title { font-size: 12px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 1px; display:flex;align-items:center;gap:8px; }
-  .table-title::before { content:''; width:3px; height:12px; background:var(--orange); border-radius:2px; display:inline-block; }
-  .search-box { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); border-radius: 8px; padding: 7px 12px; color: #fff; font-size: 12px; outline: none; width: 190px; }
+  .table-card { background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,37,88,0.06); }
+  .table-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--card-border); flex-wrap: wrap; gap: 8px; background: var(--bg-card2); }
+  .table-title { font-size: 12px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: 1px; display:flex;align-items:center;gap:8px; }
+  .table-title::before { content:''; width:3px; height:12px; background:var(--navy); border-radius:2px; display:inline-block; }
+  .search-box { background: #fff; border: 1px solid var(--card-border); border-radius: 8px; padding: 7px 12px; color: var(--navy); font-size: 12px; outline: none; width: 190px; }
   .search-box::placeholder { color: var(--text-muted); }
   table { width: 100%; border-collapse: collapse; }
-  thead { background: rgba(255,255,255,0.02); }
-  th { padding: 10px 14px; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); font-weight: 700; }
-  td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; color: var(--text-label); }
+  thead { background: var(--bg-card2); }
+  th { padding: 10px 14px; font-size: 10px; color: var(--navy); text-transform: uppercase; letter-spacing: 1px; text-align: left; border-bottom: 2px solid var(--card-border); font-weight: 700; }
+  td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid rgba(0,61,122,0.06); vertical-align: middle; color: var(--text-label); }
   tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,0.03); }
+  tr:hover td { background: rgba(0,61,122,0.03); }
   .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
   .badge-op { background: rgba(79,195,247,0.15); color: var(--blue); }
   .badge-staff { background: rgba(0,230,118,0.15); color: var(--green); }
@@ -165,12 +173,12 @@
   .badge-active { background: rgba(0,230,118,0.15); color: var(--green); }
   .badge-cuti { background: rgba(255,140,0,0.2); color: var(--orange); }
   .badge-upcoming { background: rgba(255,68,68,0.15); color: var(--red); }
-  .name-cell { font-weight: 600; color: #fff; }
+  .name-cell { font-weight: 600; color: var(--navy); }
   .name-cell.warning { color: var(--red); }
   .name-cell.blink { animation: blink-warn 0.8s ease-in-out infinite; }
   @keyframes blink-warn { 0%,100%{color:var(--red);text-shadow:0 0 8px rgba(255,68,68,0.8);} 50%{color:var(--orange);text-shadow:none;} }
   .days-bar { display: flex; align-items: center; gap: 8px; }
-  .bar-wrap { flex: 1; background: #222; border-radius: 4px; height: 6px; overflow: hidden; min-width: 80px; }
+  .bar-wrap { flex: 1; background: rgba(0,61,122,0.08); border-radius: 4px; height: 6px; overflow: hidden; min-width: 80px; }
   .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
   .bar-green { background: var(--green); }
   .bar-yellow { background: var(--yellow); }
@@ -181,25 +189,25 @@
   /* Attendance */
   .attend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
   .attend-card { background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 14px; padding: 20px; }
-  .attend-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .attend-title { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
   .attend-form { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; margin-bottom: 16px; }
   .attend-table-wrap { max-height: 220px; overflow-y: auto; }
   .attend-table-wrap::-webkit-scrollbar { width: 4px; }
-  .attend-table-wrap::-webkit-scrollbar-track { background: #111; }
-  .attend-table-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+  .attend-table-wrap::-webkit-scrollbar-track { background: #f0f2f7; }
+  .attend-table-wrap::-webkit-scrollbar-thumb { background: rgba(0,61,122,0.2); border-radius: 2px; }
   .tag-hadir { background: rgba(0,230,118,0.15); color: var(--green); padding: 3px 8px; border-radius: 12px; font-size: 11px; }
   .tag-absen { background: rgba(255,68,68,0.15); color: var(--red); padding: 3px 8px; border-radius: 12px; font-size: 11px; }
   .tag-cuti { background: rgba(255,140,0,0.2); color: var(--orange); padding: 3px 8px; border-radius: 12px; font-size: 11px; }
   .tag-off { background: rgba(130,130,130,0.15); color: #888; padding: 3px 8px; border-radius: 12px; font-size: 11px; }
   /* Charts */
   .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-  .chart-card { background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; }
-  .chart-title { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; display:flex;align-items:center;gap:8px; }
-  .chart-title::before { content:''; width:4px; height:14px; background:var(--orange); border-radius:2px; display:inline-block; }
+  .chart-card { background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,37,88,0.06); }
+  .chart-title { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; display:flex;align-items:center;gap:8px; }
+  .chart-title::before { content:''; width:4px; height:14px; background:var(--navy); border-radius:2px; display:inline-block; }
   .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
   .leg-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: 4px; }
   /* Legend warn */
-  .warn-legend { display: flex; align-items: center; gap: 20px; padding: 12px 20px; background: rgba(229,57,53,0.08); border: 1px solid rgba(229,57,53,0.3); border-radius: 10px; margin-bottom: 16px; font-size: 12px; }
+  .warn-legend { display: flex; align-items: center; gap: 20px; padding: 12px 20px; background: rgba(192,57,43,0.06); border: 1px solid rgba(192,57,43,0.2); border-radius: 10px; margin-bottom: 16px; font-size: 12px; }
   .warn-legend span { color: var(--text-muted); }
   .warn-ex { color: var(--red); animation: blink-warn 0.8s infinite; font-weight: 600; }
   /* Page visibility */
@@ -208,37 +216,37 @@
   .empty-msg { text-align: center; padding: 40px; color: var(--text-muted); font-size: 14px; }
   .dot-alert { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--red); margin-left: 4px; animation: pulse 1.2s infinite; }
   @keyframes pulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.4);opacity:0.6;} }
-  .btn-sm { background: none; border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; padding: 4px 10px; color: var(--text-muted); font-size: 11px; cursor: pointer; transition: all 0.2s; }
-  .btn-sm:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .btn-sm { background: none; border: 1px solid rgba(0,61,122,0.15); border-radius: 6px; padding: 4px 10px; color: var(--text-muted); font-size: 11px; cursor: pointer; transition: all 0.2s; }
+  .btn-sm:hover { background: rgba(0,61,122,0.06); color: var(--navy); }
   /* Modal */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
-  .modal { background: #1c1c27; border: 1px solid var(--card-border); border-radius: 16px; padding: 28px; width: 480px; max-width: 95vw; }
-  .modal-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 20px; }
+  .modal { background: #fff; border: 1px solid var(--card-border); border-radius: 16px; padding: 28px; width: 480px; max-width: 95vw; }
+  .modal-title { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 20px; }
   .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-  .info-item { background: #0a0a0f; border-radius: 8px; padding: 12px; }
+  .info-item { background: var(--bg-card2); border-radius: 8px; padding: 12px; }
   .info-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-  .info-val { font-size: 15px; color: var(--orange-light); font-weight: 600; }
+  .info-val { font-size: 15px; color: var(--navy); font-weight: 600; }
   .modal-close { background: none; border: 1px solid var(--card-border); border-radius: 8px; padding: 8px 18px; color: var(--text-muted); cursor: pointer; font-size: 13px; }
   /* Absensi bulk table */
   .bulk-att-wrap { overflow-x: auto; max-height: 500px; overflow-y: auto; }
   .bulk-att-wrap::-webkit-scrollbar { width: 6px; height: 6px; }
-  .bulk-att-wrap::-webkit-scrollbar-track { background: #111; }
-  .bulk-att-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+  .bulk-att-wrap::-webkit-scrollbar-track { background: #f0f2f7; }
+  .bulk-att-wrap::-webkit-scrollbar-thumb { background: rgba(0,61,122,0.2); border-radius: 3px; }
   .att-bulk-table { min-width: 700px; }
-  .att-bulk-table th { position: sticky; top: 0; background: #0d0d14; z-index: 2; }
-  .att-bulk-table td.name-col { position: sticky; left: 0; background: #111118; z-index: 1; min-width: 180px; }
+  .att-bulk-table th { position: sticky; top: 0; background: #eef1f8; z-index: 2; color: var(--navy); }
+  .att-bulk-table td.name-col { position: sticky; left: 0; background: #fff; z-index: 1; min-width: 180px; border-right: 1px solid rgba(0,61,122,0.1); }
   .att-bulk-table td.noreg-col { position: sticky; left: 180px; background: #111118; z-index: 1; min-width: 100px; color: var(--text-muted); font-size: 12px; }
-  .att-select { background: #0a0a0f; border: 1px solid rgba(255,140,0,0.2); border-radius: 6px; padding: 4px 8px; color: var(--orange-light); font-size: 12px; outline: none; width: 100%; }
+  .att-select { background: var(--bg-card2); border: 1px solid rgba(255,140,0,0.2); border-radius: 6px; padding: 4px 8px; color: var(--navy); font-size: 12px; outline: none; width: 100%; }
   .att-select:focus { border-color: var(--orange); }
   .dept-header-row td { background: rgba(0,150,255,0.12); color: #4fc3f7; font-weight: 700; font-size: 12px; padding: 8px 16px; text-transform: uppercase; letter-spacing: 0.5px; border-left: 3px solid #00b4ff; }
   /* Toast notification */
   .toast { position: fixed; bottom: 30px; right: 30px; background: #1a2a1a; border: 1px solid var(--green); border-radius: 10px; padding: 14px 22px; color: var(--green); font-size: 13px; font-weight: 600; z-index: 9999; display: none; animation: slideUp 0.3s ease; }
   .toast.show { display: block; }
-  .toast.error { background: #2a1a1a; border-color: var(--red); color: var(--red); }
+  .toast.error { background: #fff5f5; border-color: var(--red); color: var(--red); }
   @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   /* GSheet modal */
-  .gsheet-modal { background: #16161f; border: 1px solid #4fc3f7; border-radius: 16px; padding: 28px; width: 500px; max-width: 95vw; }
+  .gsheet-modal { background: #fff; border: 1px solid rgba(0,61,122,0.2); border-radius: 16px; padding: 28px; width: 500px; max-width: 95vw; }
   .gsheet-modal .field input { width: 100%; margin-bottom: 12px; }
   .gsheet-info { background: rgba(79,195,247,0.08); border: 1px solid rgba(79,195,247,0.3); border-radius: 8px; padding: 12px; font-size: 12px; color: #4fc3f7; margin-bottom: 16px; line-height: 1.6; }
   .gsheet-info code { background: rgba(79,195,247,0.15); padding: 2px 6px; border-radius: 4px; font-family: monospace; }
@@ -246,41 +254,88 @@
   /* ===== EXTRA POLISH ===== */
   .content { padding: 20px 24px; }
   ::-webkit-scrollbar { width: 5px; height: 5px; }
-  ::-webkit-scrollbar-track { background: var(--bg-card); }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
-  .info-item { background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px; border: 1px solid var(--card-border); }
+  ::-webkit-scrollbar-track { background: #f0f2f7; }
+  ::-webkit-scrollbar-thumb { background: rgba(0,61,122,0.2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0,61,122,0.35); }
+  .info-item { background: var(--bg-card2); border-radius: 8px; padding: 12px; border: 1px solid var(--card-border); }
   .info-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-  .info-val { font-size: 15px; color: #fff; font-weight: 600; }
-  .gsheet-modal { background: #111118; border: 1px solid rgba(0,180,216,0.4); border-radius: 14px; padding: 24px; width: 500px; max-width: 95vw; }
-  .gsheet-info { background: rgba(0,180,216,0.06); border: 1px solid rgba(0,180,216,0.2); border-radius: 8px; padding: 12px; font-size: 12px; color: #4fc3f7; margin-bottom: 16px; line-height: 1.6; }
-  .dept-header-row td { background: rgba(192,57,43,0.12); color: #e57373; font-weight: 700; font-size: 11px; padding: 8px 16px; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid #c0392b; }
+  .info-val { font-size: 15px; color: var(--navy); font-weight: 700; }
+  .gsheet-modal { background: #fff; border: 1px solid rgba(0,61,122,0.2); border-radius: 14px; padding: 24px; width: 500px; max-width: 95vw; }
+  .gsheet-info { background: rgba(0,61,122,0.04); border: 1px solid rgba(0,61,122,0.15); border-radius: 8px; padding: 12px; font-size: 12px; color: var(--navy); margin-bottom: 16px; line-height: 1.6; }
+  .dept-header-row td { background: #eef1f8; color: var(--navy); font-weight: 700; font-size: 11px; padding: 8px 16px; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid var(--navy); }
   .badge { padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; }
-  .badge-op { background: rgba(0,180,216,0.15); color: #00b4d8; }
-  .badge-staff { background: rgba(0,230,118,0.15); color: #00e676; }
-  .badge-mgmt { background: rgba(255,215,0,0.15); color: #ffd700; }
-  .badge-active { background: rgba(0,230,118,0.15); color: #00e676; }
-  .badge-cuti { background: rgba(230,126,34,0.2); color: #f39c12; }
-  .badge-upcoming { background: rgba(192,57,43,0.15); color: #ff6b6b; }
-  .tag-hadir { background: rgba(0,230,118,0.15); color: #00e676; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-  .tag-absen { background: rgba(192,57,43,0.15); color: #ff6b6b; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-  .tag-cuti { background: rgba(230,126,34,0.2); color: #f39c12; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-  .tag-off { background: rgba(255,255,255,0.05); color: #5a6278; padding: 3px 10px; border-radius: 12px; font-size: 11px; }
+  .badge-op { background: rgba(0,86,168,0.1); color: var(--navy-light); }
+  .badge-staff { background: rgba(0,135,90,0.1); color: var(--green); }
+  .badge-mgmt { background: rgba(245,166,35,0.15); color: var(--gold-dark); }
+  .badge-active { background: rgba(0,135,90,0.1); color: var(--green); }
+  .badge-cuti { background: rgba(245,166,35,0.15); color: var(--gold-dark); }
+  .badge-upcoming { background: rgba(192,57,43,0.1); color: var(--red); }
+  .tag-hadir { background: rgba(0,135,90,0.1); color: var(--green); padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .tag-absen { background: rgba(192,57,43,0.1); color: var(--red); padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .tag-cuti { background: rgba(245,166,35,0.15); color: var(--gold-dark); padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .tag-off { background: rgba(0,61,122,0.06); color: var(--text-muted); padding: 3px 10px; border-radius: 12px; font-size: 11px; }
   .days-bar { display: flex; align-items: center; gap: 8px; }
-  .bar-wrap { flex: 1; background: rgba(255,255,255,0.06); border-radius: 4px; height: 6px; overflow: hidden; min-width: 80px; }
+  .bar-wrap { flex: 1; background: rgba(0,61,122,0.08); border-radius: 4px; height: 6px; overflow: hidden; min-width: 80px; }
   .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
-  .bar-green { background: linear-gradient(90deg, #00e676, #00b4d8); }
-  .bar-yellow { background: linear-gradient(90deg, #f39c12, #ff6b00); }
-  .bar-red { background: linear-gradient(90deg, #c0392b, #e74c3c); }
+  .bar-green { background: linear-gradient(90deg, var(--green), #00b37d); }
+  .bar-yellow { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+  .bar-red { background: linear-gradient(90deg, var(--red), #e53935); }
   .days-num { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
-  .btn-save-local { background: rgba(192,57,43,0.15); border: 1px solid rgba(192,57,43,0.5); color: #e57373; }
-  .btn-save-local:hover { background: rgba(192,57,43,0.3); }
-  .att-select { background: rgba(255,255,255,0.04); border: 1px solid var(--card-border); border-radius: 6px; padding: 4px 8px; color: #e0e0e0; font-size: 12px; outline: none; width: 100%; }
-  .att-select:focus { border-color: var(--orange); }
+  .btn-save-local { background: rgba(0,61,122,0.08); border: 1px solid rgba(0,61,122,0.25); color: var(--navy); }
+  .btn-save-local:hover { background: rgba(0,61,122,0.15); }
+  .att-select { background: #fff; border: 1px solid var(--card-border); border-radius: 6px; padding: 4px 8px; color: var(--navy); font-size: 12px; outline: none; width: 100%; }
+  .att-select:focus { border-color: var(--navy); }
 </style>
 </head>
 <body>
-<div class="app">
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="login-screen" style="display:flex;position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#002558 0%,#003d7a 50%,#002558 100%);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:20px;padding:40px 36px;width:380px;max-width:95vw;box-shadow:0 30px 80px rgba(0,0,0,0.4);text-align:center;">
+    <!-- Logo -->
+    <div style="background:linear-gradient(135deg,#003d7a,#0056a8);border-radius:14px;width:72px;height:72px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 24px rgba(0,61,122,0.3);">
+      <span style="font-size:28px;font-weight:900;color:#f5a623;font-family:sans-serif;">JPC</span>
+    </div>
+    <div style="font-size:20px;font-weight:800;color:#002558;margin-bottom:4px;letter-spacing:0.5px;">JPC HRD SYSTEM</div>
+    <div style="font-size:12px;color:#7a8ba8;margin-bottom:28px;letter-spacing:1px;text-transform:uppercase;">Leave & Attendance Management</div>
+
+    <!-- Form -->
+    <div style="margin-bottom:14px;text-align:left;">
+      <label style="font-size:11px;font-weight:700;color:#7a8ba8;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Username</label>
+      <input id="login-user" type="text" placeholder="Masukkan username" autocomplete="username"
+        style="width:100%;padding:12px 14px;border:2px solid #e8edf5;border-radius:10px;font-size:14px;color:#002558;outline:none;font-family:inherit;transition:border 0.2s;box-sizing:border-box;"
+        onfocus="this.style.borderColor='#003d7a'" onblur="this.style.borderColor='#e8edf5'"
+        onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()">
+    </div>
+    <div style="margin-bottom:20px;text-align:left;">
+      <label style="font-size:11px;font-weight:700;color:#7a8ba8;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Password</label>
+      <div style="position:relative;">
+        <input id="login-pass" type="password" placeholder="Masukkan password" autocomplete="current-password"
+          style="width:100%;padding:12px 14px;border:2px solid #e8edf5;border-radius:10px;font-size:14px;color:#002558;outline:none;font-family:inherit;transition:border 0.2s;box-sizing:border-box;"
+          onfocus="this.style.borderColor='#003d7a'" onblur="this.style.borderColor='#e8edf5'"
+          onkeydown="if(event.key==='Enter')doLogin()">
+        <span onclick="togglePass()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:#7a8ba8;" id="pass-eye">👁️</span>
+      </div>
+    </div>
+
+    <div id="login-error" style="display:none;background:#fff5f5;border:1px solid #ffcccc;border-radius:8px;padding:10px 14px;font-size:12px;color:#c0392b;margin-bottom:14px;font-weight:600;">
+      ❌ Username atau password salah!
+    </div>
+
+    <button onclick="doLogin()" id="login-btn"
+      style="width:100%;padding:13px;background:linear-gradient(135deg,#003d7a,#0056a8);border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.5px;font-family:inherit;transition:all 0.2s;box-shadow:0 4px 15px rgba(0,61,122,0.3);"
+      onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,61,122,0.4)'"
+      onmouseout="this.style.transform='';this.style.boxShadow='0 4px 15px rgba(0,61,122,0.3)'">
+      🔐 Masuk
+    </button>
+
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid #f0f2f7;font-size:11px;color:#b0bcc8;">
+      © 2026 JPC HRD System — Confidential
+    </div>
+  </div>
+</div>
+
+<div class="app" id="main-app" style="display:none;">
   <!-- Sidebar -->
   <div class="sidebar">
     <div class="logo">
@@ -301,7 +356,10 @@
           <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAH5AukDASIAAhEBAxEB/8QAHAABAAIDAQEBAAAAAAAAAAAAAAcIAwQGAQUC/8QAVRABAAECBAAGCwoIDQMEAwAAAAECAwQFBhEHCBIUITE1QVFTYXF0gZGSshMXIjY3c3WhsbMVIzJVYpPR0xYzNEJSVnKClJWiwcIkJdJDVGPwo+Hx/8QAHAEBAAEFAQEAAAAAAAAAAAAAAAUBAwQGBwII/8QAPBEBAAECAgMNBwQCAgMBAAAAAAECAwQRBQYSFCExMjNBUWFxgaGx4RMWNUJjwdEiUpHwU3I0QxUjYgf/2gAMAwEAAhEDEQA/AKZAlLg90hRgrdvNcztRVi6o5Vq1VHRajtTP6X2eNavXqbVOcpbQ2h7+lsR7G1vRHDPNEf3gjnc/prQWYZjTRiMxqnA4eemKZje5VHi7Xn9Du8s0hp7AUxyMvt364667/wCMmfDtPR6Ifee9pDXMVcuc7sGjdWNHaOiMqIqq6at+e7mjuYLeEwtunk28NZop7lNuIh+ub2O82/VhkGPnKfi3RlvQx83sd5t+rBzex3m36sMgZyrsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DHzex3m36sHN7HebfqwyBnJsU9DFOGw8xMTYtTE9cTRD52YaayLHRMYjK8NvP86inkVemnaX1hWK6qeCVq7hbF6nZuURVHXESjbUPBzct0VX8lvzd26fcL0xFXmq6vNPpcDiLN7DX67GItV2rtE7VUVxtMT4lh3P6y0xhc+wk10xTax1FP4q9t1/o1d2PsZ9jHTE7Nzg6Wh6e1JtXKJvYCNmr9vNPZ0T4diFBlxeHvYTFXMNiLdVu9aqmmumeuJhiS3C5XVTNMzExlMOu4MckpzPOpxmIo5WHwe1e0x0VVz+TH1TPmjupe7bmODPAxg9J4euadrmJqqvVeedo+qIdMgsXd27k9TuOqmjqcFo63vfqr/VPfwfxAAxmzTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACP+FvJKa8PbzzD0fDtzFvEbdumeimrzT0eeO4jRYHNsHRmGV4nBV7cm/aqo6e1Mx0T5pQPzHF94qS+Au7VvZnmcf130Z7HG037VO9cjf7Y4f53u/NOem6It6ey63T1U4W1H+mH0GlkPYLAeTW/ZhuImvjS6xhIj2FER0R5ACi/MgAqAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOW5ph+9Uupc4u2p4UVpOmmrZzjp+z62Q9g8B5Nb9mG60sh7B4Dya37MN1br40s7C8hR2R5ACi+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOcdG5xct86M0j8vf9n1sh7B4Dya37MN1pZD2DwHk1v2YbrxXxpZmF5CjsjyAFF8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc46Nzi5b50ZpH5e/7PrZD2DwHk1v2YbrSyHsHgPJrfsw3XivjSzMLyFHZHkAKL4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA5x0bnFy3zozSPy9/2fWyHsHgPJrfsw3WlkPYPAeTW/ZhuvFfGlmYXkKOyPIAUXwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABzjo3OLlvnRmkfl7/s+tkPYPAeTW/ZhutLIeweA8mt+zDdeK+NLMwvIUdkeQAovgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAptRHOD14KbdPSAD1nmAAAAAAAAAAAAAAAAOcdG5xct86M0j8vf8AZ9bIeweA8mt+zDdaWQ9g8B5Nb9mG68V8aWZheQo7I8gBRfAAAAAAAAAAAAAAAAAAEt8EXBNgtW6fnPM3zDFWLNy5VRYt4aaYq2pnaapmqJ7fa27Xh6IkWr4vHyU5d87e+8lk4Simu5lU1bW7H38FgYrs1ZTMxGb4vvB6T/Omd/rrX7s94PSn51zv9bb/AHaWxK7nt9DmPvFpOP8AulEnvB6U/Oud/rbf7s94PSn51zv9bb/dpbCMPb6FY1h0n/mlEnvB6U/Oud/rbf7s94PSn51zv9db/dpbDc9voUnWLScf90qq8MnB7Z0PicFdwONu4nA4zlRR7tty6Kqdt4mYiImJie5CPtk+8a2P+15F89d+ylAUIjE0RRcmIdY1Zxd3F6Oou3pzq39/sl4AsJ91HBjpO5rPVNGURiJw1im1Vev3YjeYoiYiYiO7MzEfX2k0e8JpT86Z1+ttfu3C8WD4/wCM+i7n3ltZXdKYOxRVb2qozcv1r03jcNjvY2K5ppiI4ESe8JpT86Z1+ttfuz3hNKfnTOv1tr92lwZW57X7WsTrFpOP+6UR+8JpT86Z1+ttfuz3hNKfnTOv1tr92lwNz2v2nvJpP/NKI/eE0p+dM6/W2v3Z7wmlPzpnX621+7S4G57X7SdYtJx/3SiP3hNKfnTOv1tr92e8JpT86Z1+ttfu0uBue1+095NJ/wCaUR+8JpT86Z1+ttfuz3hNKfnTOv1tr92lwNz2v2k6xaTj/ulEfvCaU/OmdfrbX7s94TSn50zr9ba/dpcDc9r9p7yaT/zSiC5wB6YnbkZvnFPd3rtz/wAHzsbxf8LVTvg9SXbc/wDy4SKujxxVCcCHmcJanmXbes+lKN+L0+Eqz5twGatwu9WBxGX4+jtRTcm3VPmqjb63B59pjUOQzP4XyfGYSmOuuu3vb81cfBn0rqy/F61bvW6rd2im5RVG001RExKxXgKJ4s5JnCa9Y21vXqYqj+J/vcorAtRrDgf0pn3LvYWzOU4urf8AGYWmIonx0fk+jafCgnX/AAc6i0fVVexeH51geVtTi7ETNG3a5UddPn6O5MsG7hq7fDG83bRms+Cx+VMTs1dE/ZxoCw2MAAAAAAAAB33B9wV6j1ZFGKro/BmWVRvzm9RvVXT+hTvEz452jwq001VTlTDFxeNsYO3Ny/VFMOBdjpbg11hqHavCZVcsYeen3fFfi6Nu1Mb9Mx4olYrRXBtpbS1FNzC4GnFY2I6cViYiuvf9GOqnzOwjdIW8BPDXLQNI6+ZTNOEo75/CDMi4ALcU03M8z6uau3bwduI2/v1b7+rHU7bKuB/QmC2mvK7mMrj+diL9VX+mJin6nfEMyjDWqIyiGoYnWPSOInOq7Mdm95Pg4HR2lMFERhdOZVb27cYWjlT59t30reWZbZ39yy/CUb9fJs0xv9TdJXYop6EbVib1c51Vz/LVjBYP/wBnh/1cMN/Jsnv7+65VgbnK6+XYpnf0w39npNujoU9vdjgqly+L0DozFb+7aZyyN+92Itz6adnL5xwI6KxlMzgreNy6vte5Yia49Fe6T9jZ4qsW6uGll2NLY6xOdu7VHfvK9Z7wB5rYiq7kmc4fF09cWsRTNurxRMbxM+hGupdKaj03cmnOcpxGFp3291mOVbnxVxvErnzD8Xbdu7bqtXbdFy3VG1VFVMTEx4YnrY1eAoni7zYsFrvjrMx7eIrj+J8PwowLOa24GNNZ5FzE5X/2bGVdP4mne1XPho7X93bzoF1rovUGkMTNvNsHMWap2t4i3vVaueKduifBO0o+5h7lvhhv2i9Y8FpP9NFWVXRP26XNgLLYAAAAAAAAAABzjo3OLlvnRmkfl7/s+tkPYPAeTW/ZhutLIeweA8mt+zDdeK+NLMwvIUdkeQAovgAAAAAAAAAAAAAAAAAC1PF3+SrLvnb33lSqy1PF3+SrLvnb33lTLwPKtK16+H0/7R5SkMBMuRyACgACEeNd2LyL5679lKAk+8a7sXkXz137KUAoPFzndn+8ztWp3wm33+cgDHbQlbiv/H/G/Rdz7y2ssrTxYPj/AIz6MufeW1lkzguRhxrXTe0nV2QAMtqXCAAACoAZKAAqACgAAAD1+btu3ct1UXKKa6Ko2qpmN4mO3E+B+geonLgQZwrcDdqui9nGkLE03emu7gInoqjtzb7k/o9Xc7iCLtuu1cqt3KKqKqZmJiqNpiYXp2RBw68GdGc4a9qTI7G2ZWqd8RZopiOcUx11REdde3p6kbisL89DoOrWtVdNUYbGTnHNV0dv5VyARrp0TmACoAAzYSxexeJt4bC2bl6/dqii3bt08qqqqeiIiH5sWbuIvUWLNuu5duVRTRRTG9VUzO0REduVnOBrg1w+lMJRm2Z003s7vU7zM9MYaJ/mU+Huz5o8N6xYqu1ZQg9OaataKs7dW/VPBHS+RwUcD+Gyu3azfVNu3isdO1VvBzEVW7Pb+F/Sq+qPD1phpjaH6E1ZtUW4yphxrSOkr+kbvtL9WflHYALiPABQAAAAAAAAYMfg8Lj8HdweNw9vEYe7Tyblu5TFUVR3JiWcge6KppmJiVdOFfggu5NbvZzpa3dxGX071XsJG9VyxHdp7dVPg6427faiBerZAvDpwYUYem9qjTuHim3EcrG4W3R1dPTcpiO13Yjx91FYnCbP66HSdWda5rmMNjJ3+afz+UGgMB0YAAAAAAAAc46Nzi5b50ZpH5e/7PrZD2DwHk1v2YbrSyHsHgPJrfsw3XivjSzMLyFHZHkAKL4AAAAAAAAAAAAAAAAAAtTxd/kqy752995UqstTxd/kqy752995Uy8DyrStevh9P+0eUpDATLkYAKAAIR413YvIvnrv2UoBT9xruxeRfPXfspQEg8XGV2f7zO1anfCbff5y8AY7aErcWD4/436MufeW1llaeK/8f8b9F3PvLayyZwXIw41rnGek6uyABltTABQAAAFQAAAAAUAAAAABVW3jDaHtZFm0agyy3FGAxtX46imOi1e6/RVG8+OJ7sQiVdbV+S4fUWnMbk+KiORibc0xVtvNFXXTVHhidp8ymebYHEZXmmJy7F0TRiMNdqtXI7XKpnadu7CFxdn2dWccEuwan6XnG4X2Fyf10eMc38NUBitxHrx1HBhpi7q3V2FyqIqjCxPu2Lqpnba1TMb+ed4jzq00zVOUMfFYijDWqrtfBEZpT4uWg4os06xzS1E11xMYC3XT+THVNzxz1R557cJx2Y8Nbt2LFuxZopotW6YooppjaKYiNoiPAyp61ai3TlDhGldJXdIYmq/c5+Dqh4AuoyAAAAAAAAAAAAAAHryummumaaoiYmNpie29B6icuBVrh10LGlc/jMMBb5OV4+qZojbaLNzpmqjxduPPHaRuujrfT2F1PprF5PioiKb1HwK9um3XHTTVHin0x0Kb5pgsRluZYnL8XRNvEYa7VauUz2qonaULi7Ps6844Jdj1S0zOPw3srk/ro8Y5pawDEbaAKgAAAA5x0bnFy3zozSPy9/2fWyHsHgPJrfsw3WlkPYPAeTW/ZhuvFfGlmYXkKOyPIAUXwAAAAAAAAAAAAAAAAABani7/ACVZd87e+8qVWWp4u/yVZd87e+8qZeB5VpWvXw+n/aPKUhgJlyMAFAAEI8a7sXkXz137KUAp+413YvIvnrv2UoBQeL5Wf7zO1anfCbff5gDHbQlbiv8Ax/xv0Xc+8trLK08V/wCP+N+i7n3ltZZM4LkYca10+J1dkADLakAAMeIu0YfDXcRdnk27VE11TtvtEdbI0NRfF/MPJrnsSpVOUZrlqjariOtH3v5aJ7mZ/wCHj9p7+Wie5mf+Hj9qsjxDbtuxzut06k6OmInOr+VnPfy0T3Mz/wAPH/ke/lonuZn/AIeP/JWMN23el69yNHdNX8rOe/lonuZn/h4/a3ct4ZdCYu5Fu7mGIwcz1Tfw9UR55jeI86q8PFd23YeatR9HzGUVVR3+i72T5tlmcYbnOV4/DYy1/Ts3IriPHt1N5SDJ8zzHKMZTjcsxt/CYinqrtV7T4p7seCVhuCHhXtaiuW8mz+LWHzSY2s3qOijEzHTt+jX4OqWZh8ZFydmrelqOmdT7+Apm9Znbpjh6Y/KWQGa08AFAABWvjNZD+DtXYfOLVva1mVmZr2jo91o2ifTE0/WsojHjK5ZTjODurHRHw8vxNu7vt2qp5Ex4t6onzMfF0RValsWq2NnC6St9FW9Pf6qwgIJ3AWV4tmnIy3SV3O71vk4nMq/g79cWad4p9M8qfFMK5ZbhLuPzHDYGxG93EXabVH9qqYiPrldjJcDZyzKcJl2HpiLOGs02qOjtUxER9jOwNuKq9qeZomvOPm1h6MPT885z2Q3AEu5REAAAADDjMVhsFhbmKxd+3YsW43ruXKopppjuzM9DWz/NsBkeUYjNMyv02cNh6eVVM9c9yI7szPREKp8JOv8ANtZZhX7rXOGy6ir/AKfCUT8GI7VVf9Kr/wCxEdO+NfxNNre52w6C1fvaVrzjeojhn7R1ph1Zw56fy27Vh8lwd3N7kbxNyaptWYnx7TVPo28Lgsfw7awv1zGGwuWYW12optVVVeeZq/2hFez9eJF1Yq7VPC6Zg9VNF4enfo2p6Z3/AESLa4addU7/APV4OvwVYWnb6tn3sl4e86s10/hfJcFircTtNWHqqs1RHn5UT2+4hw8bzF+7TwVMq7q5oy7Tszaju3vJbTRPCdpbVVdGGw+KnCY6qOjC4n4NUz3KZ6qvFE7u1id1FY3pqiqmZiY6pjtJ14EuFS7cv2NNanxPLrr2owmNuT0zPaorn7J8zPsY3anZraPp3U6cNRN/CTMxHDHPHYnUBINBABQAAVv4zOnowGqcNntija1mVvk3do6Iu0RETPnp29ErII94wOUxmfBrjL0Ucq7gK6MVRPciJ2q/0zV6GNi6IqtT1Ng1Zxs4TSNFWe9VvT3+qqoCDdyAFQAAAAc46Nzi5b50ZpH5e/7PrZD2DwHk1v2YbrSyHsHgPJrfsw3XivjSzMLyFHZHkAKL4AAAAAAAAAAAAAAAAAAtTxd/kqy752995UqstTxd/kqy752995Uy8DyrStevh9P+0eUpDATLkYAKAAIR413YvIvnrv2UoBT9xruxeRfPXfspQCg8Xys/3mdq1O+E2+/zkAY7aErcV/4/436LufeW1llaeK/8f8b9F3PvLayyZwXIw41rp8Tq7IAGW1IAAaGovi/mHk1z2Jb7Q1F8X8w8muexLzXxZX8PylPbCkQP1DXcs30Rbn9MPyAPUb714Aq9h+rdy5au0XbVdVFdM701UztMT3X5h6KTGe9K2nA3qyrVujrWIxNUTj8LVzfFbfzqoiJivzxMefd2yuXFezKvD6vx+WTVMWsXhPdNt+uuiqNvqqqWMhOYW5NduJlwzWTARgdIV26eCd+O96AyECAAOd4TcJGO4P8APcNMcqZwF2qmO7VTTyo+uIdE1c6o91ybG2t9uXYrjfbq3pmHi5GdMwyMLXNF+iqOaYUe2eP0/LXpfRFE5xDuOAzL/wAIcJ+U0VU70Waqr9U9zk0zMf6uStnCuHFdwk3daY/F95wM0x46q6f/ABlZBL4CnK1n0uQ673/aaRin9sR+QBmtNAAAYMfiKMJgb+LuTtbs2qrlU+CImf8AZSqcozeqKZqmIhXTjIaurzPUVGncLe3wmX9N+InorvTHb2/oxO3jmUTs2aYu5j8zxWPvVTVdxN6u7XM9uapmZ+1ghr9yua6pql3/AEVgaMDhaLNPNHjzvAHhIvd3gAABMZrZcCeq6tVaMt14mvlY/BVc3xMz11bR8GufHH1xLulbeLBmdWG1pjMsmra3jcJNW3drtzvH1TWskm8JXNduJlwzWXAxgtIV0UxlE78d4AyUAAANDUWBpzPIMwy6v8nE4a5anw8qmY/3b7yeqVKozjJctVzRXFUcMSooN/UFnm2f5hh4j+KxN2j0VzDQa5L6Ks1bdFNXTAALgAAAA5x0bnFy3zozSPy9/wBn1sh7B4Dya37MN1pZD2DwHk1v2YbrxXxpZmF5CjsjyAFF8AAAAAAAAAAAAAAAAAAWp4u/yVZd87e+8qVWWp4u/wAlWXfO3vvKmXgeVaVr18Pp/wBo8pSGAmXIwAUAAQjxruxeRfPXfspQCn7jXdi8i+eu/ZSgFB4vlZ/vM7Vqd8Jt9/nIAx20JW4r/wAf8b9F3PvLayytPFf+P+N+i7n3ltZZM4LkYca10+J1dkADLakAANDUXxfzDya57Et9oai+L+YeTXPYl5r4sr+H5SnthSJ7Dx+pa6+h7fFh+QFFwAVAAEm8W+mauEu3yY6sHdmfF0ftWehA3FZyaucXmuobtHwKbcYSzPamZmKq/RtR6U8wmMDGVrNxjXLEU3tJ1RT8sRD0BmNUAAGvmtVNOXYnlVRTHuNe8zPRHwZ6Ww+PrjFRgdG5zi6uqzgb1fh6KJebnFmV/D0zVepiOmFLN3gNdzzfRNEZUwm7io00zmOoK9o5UWLMRPc3mv8AZCfYQHxUf5dqH5mz9tafITWB5FxbXD4tc7vKHoDKawAAOd4S7lVrg9z+unr/AAfejeOuN6Jh0TmuFH5OtQeQXfZl4u8SWZgIzxNuOuPNTmet5D2e28hrz6FpneABUAAAUHc8A96qzwq5NtM7V1XaKoidt4m1X/8A1bNRvL8Zicvx1nG4O7VZxNiuK7Vynrpqjql3VfDJr6q1yIza1TMdVUYW3vH1bfUzsLiabVMxMNG1m1axOlMRTeszG9GU59vqtUKkXuFXhAvb8vUd+N/6Fm3Rt6KWjidf60xO8XdTZptPaoxE0fZsyP8AyFHNDX6dRMZM/qrp8fwuJvHdN47sKV3dTaiu7+65/m1zf+njLlX2y0b+PxuIpqpv4zE3aatt4uXaqt9urfeenteh4/8AIf8AyyqdQLnzXoju9V3MRjMHYje7irNvbr5dymnb0z4nzMx1ZpjL7Fy9i8/y23TRG8xzimavFERO8z4IUtHmdIVc0MujUC3ExNV6Z7vVvZ/jLePz3MMdaiqLeJxVy9TFUbTEVVTMRLTh+XsI+XQbdEW6IpjmeAD2AAAAOcdG5xct86M0j8vf9n1sh7B4Dya37MN1pZD2DwHk1v2YbrxXxpZmF5CjsjyAFF8AAAAAAAAAAAAAAAAAAWp4u/yVZd87e+8qVWWp4u/yVZd87e+8qZeB5VpWvXw+n/aPKUhgJlyMAFAAEI8a7sXkXz137KUAp+413YvIvnrv2UoBQeL5Wf7zO1anfCbff5yAMdtCVuK/8f8AG/Rdz7y2ssrTxX/j/jfou595bWWTOC5GHGtdPidXZAAy2pAADQ1F8X8w8muexLfaWe267uR4+3bpmqqrD3IpiOuZmmdoea+LK/h+Up7YUgew9u0VW7lVuuJprpmYqiY2mJga7EPoWiunZjffkevDKVzbp6QfqiiuuqKLdE11T1UxG8y+pl+nM+zC5FvA5NmGIqnveGqmPTtsZSt137duM6qoiO18l9nSGnMz1RnVrK8rszXcq6blcx8G1R26qp7UO80hwJakzK9bu51ct5Thp6ZiaorvTHgpjojzz5k86N0rk2k8sjA5PhYtxVtN27V03LtXdqnt+LqjtMqxhKrm/O9DVNNa3YXCUTRhpiuvq4IbGkMhwemtO4TJcDH4rD0bTVMbTXVPTVVPhmd5fWBM00xTGUOR3btdyua65zmeEAVWgABwPGAzGnL+DDMaOVya8XNGGo8PKqjePVip3yAuNNntN3H5Vp+xXvFmmrE348M/Bo8+0Velj4uuKbU5p3VvCTitI26YjgnP+N9CD14IJ3VN3FS/l2ofmbP21p+QDxUv5dqH5mz9tafk5gpzsuKa4fFrnd5QAMlrAAA5rhR+TrUHkF32ZdK5rhR+TrUHkF32ZeLvEnsZuj/+Vb/2jzU5ePZeNefQkQACoAAAAAAAAAAAAAAAAAAAA5x0bnFy3zozSPy9/wBn1sh7B4Dya37MN1pZD2DwHk1v2YbrxXxpZmF5CjsjyAFF8AAAAAAAAAAAAAAAAAAWp4u/yVZd87e+8qVWWp4u/wAlWXfO3vvKmXgeVaVr18Pp/wBo8pSGAmXIwAUAAQjxruxeRfPXfspQCn7jXdi8i+eu/ZSgFB4vlZ/vM7Vqd8Jt9/nIAx20JW4r/wAf8b9F3PvLayytPFf+P+N+i7n3ltZZM4LkYca10+J1dkADLakAAACrzk09yPQcmnuR6HoK7U9Lzk09yPQcmnuR6HoG1PS85NPcj0EREdp6GRtT0gA8gAAAAAMGYYzDZfgMRjsZeps2MPbqu3K6p6IpiN5lTHWGeXtR6nzDOb818rE3pqppq66aI6KafNERCZOMlram3bp0fl13lVVTFeYVUz1R102/P0VT4Nu7KBIRGNvRXVsRzOr6laImxYnFXI36+Ds9QBgw3tN3FS/l2ofmbP21p+QDxUv5dqH5mz9tafk3geRcU1w+LXO7ygAZTWAABzXCj8nWoPILvsy6VzXCj8nWoPILvsy8XeJPYzdH/wDKt/7R5qcy8ey8a8+hIABUAAAAAAAAAAAAAAAAAAAAc46Nzi5b50ZpH5e/7PrZD2DwHk1v2YbrSyHsHgPJrfsw3XivjSzMLyFHZHkAKL4AAAAAZPO1T0gBkbVPSAGRtU9IAKxMTwAAqAAAALU8Xf5Ksu+dvfeVKrLU8Xf5Ksu+dvfeVMvA8q0rXr4fT/tHlKQwEy5GACgACEeNd2LyL5679lKAU/ca7sXkXz137KUAoPF8rP8AeZ2rU74Tb7/OQBjtoStxX/j/AI36LufeW1llaeK/8f8AG/Rdz7y2ssmcFyMONa6fE6uyABltSAAAAAAAAAAAAAAABUcJwva9w2jMn9zsV0XM3xNE82tdcU/p1eCO1HbnztHhW4VMs0pavZdlk2sfnXJ29z33t2J7tc939GOnu7K05vmONzfMr2Y5jibmIxN6rlV3K53mf2R4I6GBicXsfop4W7at6rXMXXTiMTGVvo6fRgxmIv4zFXMVirtV6/drmu5cqneqqZneZmfOwv3PU8RUy6zFMURERG8/ICj0m7ipfy7UPzNn7a0/IB4qX8u1D8zZ+2tPybwPIuKa4fFrnd5QAMprAAA5rhR+TrUHkF32ZdK5rhR+TrUHkF32ZeLvEnsZuj/+Vb/2jzU5l49l4159CQACoAAAAAAAAAAAAAAAAAAAA5x0bnFy3zozSPy9/wBn1sh7B4Dya37MN1pZD2DwHk1v2YbrxXxpZmF5CjsjyAFF8AASBwCZJl2e6+t4fNMNRibFnD13otVxvTVVG0RvHbjp328EI/SlxZPlFueQXfaoXLMRNyM0Rp65Vb0deqpnKcpWM/AmTfmrA/4en9h+BMm/NWB/w9P7G+J7Yo6HC90Xf3T/AC+f+Bsn/NOB/UU/sPwNk/5pwP6in9jfDYp6FN0Xf3T/AC0PwNk/5pwP6in9h+Bsn/NOB/UU/sb4ezp6DdF390/y5rV2kdO5xp/F4XE5ThKfxVU27lFmKardW3RVEx0xMKcLy5j2NxPzdX2So0jMdTTExlDpeod2uui9TVVMxGX3AGA6CAAAALU8Xf5Ksu+dvfeVKrLU8Xf5Ksu+dvfeVMvA8q0rXr4fT/tHlKQwEy5GACgACEeNd2LyL5679lKAU/ca7sXkXz137KUAoPF8rP8AeZ2rU74Tb7/OQBjtoStxX/j/AI36LufeW1llaeK/8f8AG/Rdz7y2ssmcFyMONa6fE6uyABltSAAAeVTFNM1VTEUxG8zPaFcno5T3x9C/1mwHrnvj6G/rNgfWlb9vb/dDNjRmMn/qq/iXVjk/fH0N/WbA+tL33x9Df1mwPrSe3t/ugnRmN/xVfxLqxynvj6G/rNgfWk98fQ39ZsD60nt7f7oI0Zjf8VX8S6scbieFHQWHiZuajw0xHbot3K/Zpl8XH8N2h8PRNWHvY7G+Czh5iZ9eaXmcRbjnXbehsfcnKmzV/EpMeILzjh/pmmqjKNO1dPVcxV//AI0x/u4HUXCprXOqKrNeazgrFUbTawdPuX+r8r61mrG24je301hNTdI39+uIojrn8LI6r1ppvTFqZzbM7Vu9tvTYonlXavFTHT552hBfCDwzZxncXMHkVNzKsFVMxVciuJv3I8NUdFPm38aLK667lyqu5VVVVVVNVUzO8zM9czPdfnZg3MZXXvcEN30Vqhg8HVFy5+uqOng/grma6pqqneZ65ntkGz2GK27i70PyAAACbuKl/LtQ/M2ftrT8gHipfy7UPzNn7a0/JrA8i4prh8Wud3lAAymsAADmuFH5OtQeQXfZl0rmuFH5OtQeQXfZl4u8Sexm6P8A+Vb/ANo81OZePZeNefQkAAqAAAAD14AAAAAAAAAAAAAAA5x0bnFy3zozSPy9/wBn1sh7B4Dya37MN1pZD2DwHk1v2YbrxXxpZmF5CjsjyAFF8AASlxZPlFueQXfaoRalLiy/KNc8gu+1Qu2OUhC6xfDL3ZKzQCfcHAAAAYMy7G4n5ur7JUaXmxtM3MHetR110TH1KN1UVU1TTVTNM0ztMTHTEozSEZTDpf8A+fzvX+77vyAjnRwAAABani7/ACVZd87e+8qVWWv4AbFWH4K8piqemub1e3cibte31bMvA8q0rXqY3BTE/ujyl3oCZciAAAAQjxruxeRfPXfspQCn7jXdi8i+eu/ZSgFB4vlZ/vM7Vqd8Jt9/nIAx20JW4r/x/wAb9F3PvLayytPFf+P+N+i7n3ltZZM4LkYca10+J1dkADLakAANDUPYHMPJbnsy32hqHsDmHkt32Jea+LK/h+Up7YUiAa7L6JoiNmAAVygADKAAVAAAAAAAAAATdxUv5dqH5mz9tafleuKrf5GoM5sb/wAZhaKtvFVMf8vrWETOBn/0uK64RMaVrz6vJ6Ay2rgADmuFH5OtQeQXfZl0r4+tsHVmGjs5wVEb1X8Det0+OaJiPreLvEllYKqKMRRVPNMealkvAa8+h4ABUAAAB97g/wAls6i1jluTYi7ctWcVdmm5Vb/K5MUzVMR49tvOsVRwMaAiOxmI/wAXc/ahri8YSrEcKWAux0xhrV67V4pomj7a4WqhI4KzRVRM1Rm5hrnpXFWMbTbs3JpjZ5py385Rle4ENDV08mm1mFvft04np+uJaV/gF0jXMzazDObW8dERetzEemjefSlqSWbue1+1q1On9JU/91X8obr4v+QdHueeZlT3eVTRP+0NW9xfcJPKm1qfEUT/ADZqwlNW0eHaqN03DxuS10L0a0aVo4L0/wAR+ECXOL5iIq2t6ot1R3asDMdPry+dmPALn9jB3LuFzfA4q7RTNVNrk1UTVt2onp6VjNnkx0PM4K10Mm3rjpWJjOvPuj8KL3KKrdyq3XTNNVMzFUT1xMPy+jqyuLmqs3rp32qxt6Y3jbo5cvnIaXZbNe3bpr6YfkAXAAAABzjo3OLlvnRmkfl7/s+tkPYPAeTW/ZhutLIeweA8mt+zDdeK+NLMwvIUdkeQAovgACReLviabHCdhLcztOIsXrVPhnkTV/xR06Dg3zOMn19kmPqq5NFvF0RXMz1UVTyap9FUvdurZrietHaXtTewV23Eb80z5LmANhfP8xkACgADyY3jZTnhLyi5keus2y+uNqKcTVct7R0TRXPKp27vRO3mXHRDxi9FXM3y23qTLbE14zBUTTiKKY3quWevePDT0z4pnuMPG25qozjmbdqfpKnB43YuTlTXvd/MriAh3ZAAAHoP1Yt13r9uxaomu5cqimimOuZnqhdTSWV0ZJpjLcpp6ZwmGotVTHVNUR0z6d5QTxd9C3MwzSjVeZWdsHhKp5nTVH8bd/p+Kn7fEsVt2kpgLeUTVLlOu+lKMRepw1vfijh7fR6AkGhgAAAID412J5WM0/g+qaLd+7VH9qaIj2ZQekrjH5jTjOEm5haKt4wOFtWZiOrlTE1zt68ehGqBxFW1cmXdNWbPsdF2qerP+d8AWU8lbiv/AB/xv0Xc+8trLK08V/4/436LufeW1lkzguRhxrXT4nV2QAMtqQAA0NQ9gcw8lu+xLfaGoewOYeS3fYl5r4sr+H5SnthSIBrsvomjiwAD0AAAAAAAAAAAAAAkzi24ynC8Jdu1VP8AKsJdsxHdmNq/+ErQwpdoHNPwNrTKMymdqLGKom5O+21E9FX1TK59PTG6UwNWdE0uS69YeaMbRd5qo8noCQaOAAPJ6Y2egrE5KacI+RV6c1tmeV1Ucm1RemuxtHRNurpp2820eOJc8s9w9aDr1Tk9Ga5Zb5WaYGifgR137XXNPhmOuI8fdVjrpqoqmmqmaaonaYmNpiUDft7Fc9DuWrmlaNIYOmc/1U70x/el+QFlPgAA9fb0TpnMdWZ9ayrLqOmr4V27MfBtUduqf/vTJETM5QtX79Fi3Ny5OUQl/it5BVbw+ZakvW42u7YXDTNPXTE71z4pnkx5pTjD5+nMpwmRZHhMowNM04fC24op3657sz4ZneZ8b6EJ+xb9nREODaax84/G13+aeDs5gBdRgAAx4m7RZsXLtydqaKZqqnuREdLI5jhUzH8FcHmd4uK+RXzWq1RPcqr+BH11Q811bNMyvYS1N69TbjnmIU+xd6rEYu9iKpnlXa5rnfuzO78Q8mHsNdfRFunZpiOh4APYAAAA5x0bnFy3zozSPy9/2fWyHsHgPJrfsw3WlkPYPAeTW/ZhuvFfGlmYXkKOyPIAUXwAB+o9E91+XsCkxnGS52gc5jUGj8rzblRNV/D0+6xvvtcj4NcetEvuoM4r+pI9zx2lsTdnlUzznCxVPa6IrpjxdE+eU5p7D3faURLgunMDOCx1dnmzzjskAXkQAAPHoK8CEuFHgYjG4q7m+kotWr1yeVdwNXwaa57tueqmf0Z2jwwg3N8qzPKMXVhM0wGIwd6J/JvUTTv4Y36/Mu+18fgsJj7E2MbhbGJtVddF23FdM+aWDewVNU507zc9E65YnB0RbvRtxHdKjYt/ieDbQ2IuTXc01gKZ7lumaI9FMxD8WODLQlmvl06awdU/p8qqPRM7MfcFfTDY/f3CZcnVn3flUvAYLGY/E04bA4S/ir1XVbs0TXVPmjp7aYuDfgTxeJvWsy1bHuGGjaqnA0zvXX/bmOimPBHT4k75ZleWZXY9wy3L8Lg7fbpsWqaInzRDbX7WBimc6pzQOk9dsRiKNjD07ETz8M+jFg8Nh8HhLWFwti3Zs2aIoooojammI6oiO0ygz2k79UzMzmADwAAMWMxFnCYS7ib9ym3atUTXXVVO0RTEbzLKjDjF6ljJ9E1ZVYriMVms+5RET0xajprnz7xT/eeLtcUUTVLO0dgqsbiqLNPPKump8zrzrUOPzW514u/VdiJ66aZnojzR0eZ89+YGv55voC1aptURRTwRvADzmuJW4r/x/wAb9F3PvLayytPFf+P+N+i7n3ltZZNYLkYca10+J1dkADLakAANDUPYHMPJbvsS32hqHsDmHkt32Jea+LK/h+Up7YUiAa7L6Jo4sAA9AAAAAAAAAAAAAAPVwOCXPqdR6ByzHVV8q/btRYxETPTFdHwZ9O0T51P0u8WrVX4Pz/EacxVzk4fMY5dnedoi9TH/ACpj/TDKwlzYr3+CWo646OnFYH2lEfqo3+7nWOATTjgAKAAPJRbwp8EuD1Jdu5vkly1gM0q6blMxtavz25nb8mrwx547aU3kxu8XLdNynZqZ2A0hiMDdi7YqylS/UumM/wBOYmbGcZZiMNtO0XJp3t1f2a46J9L4y8121au26rd23Rcoqjaaa6YmJ8cS5zMNAaMxtU139NZby56ZqosxRMz/AHdkdXo+rP8ATLfcLr9EUxGItb/TH4n8qeEde3XM9UduZW4t8F+g4qir+DmGnwcuuY9p9vJdMaeyeZqyzJcBha/6dqxTFXp23edwVxwyyLmv+Gin/wBdqZnryj8q0aJ4KtU6kqt3ruFqyvAzPTfxVMxMx+jR0TV9UeFY7ROk8n0jlMYDKrExNW03r9fTcvVd2qf9uqHQbGzNtYai3vxwtN0vrFitJ/prnKnoj79IAyWvAAAACF+NJnkWcly7ILNf4zE3pv3Y/QojaPNNU/6UzV1U0UVVVVRTTTG8zM7REKfcKepJ1PrfHZlRVNWGpq9xwvgtU9Eenpq/vMPG3NmjKOdt2puj904+LtUfpo3+/mcsAh3ZAAAAAABzjo3OLlvnRmkfl7/s+tkPYPAeTW/ZhutLIeweA8mt+zDdeK+NLMwvIUdkeQAovgAAAPp6ZzjF5Bn+DzjBVTF7DXIriN9oqjt0z4JjePOuRpnOMFqDIcJnGAucuxibcVx3aZ7dM+GJ6J8SkyS+AnX8aYzWrJ82vf8AaMbXvyp6sPc6I5X9meqfNPd3ysJe9nVlPBLTdb9CzjrEX7Ufrp8YWfCJpqpiqmd4nqntTAmnIMp4AAUAAAAAAAAAAAAABWGHGYmxg8JexeKuxasWaJuXK6uqmmI3mZU/4TNU3dXatxWaVTVGGj8Xhbc/zLUT0eeemqfDMpA4wfCHRmVVelMmvRVhrVe2Nu0zvFyumf4uPBEx092fF0wwicZfiudmngh1bU/QU4a3uq9H6quCOiPV6AwW9zAACVuK/wDH/G/Rdz7y2ssrTxX/AI/436LufeW1lkzguRhxrXT4nV2QAMtqQAA0NQ9gcw8lu+xLfaGoewOYeS3fYl5r4sr+H5SnthSIBrsvomjiwAD0AAAAAAAAAAAAAAMuExOIweMs4vC3arV6zXFduunrpqid4n0wxA81UxVExPBK4vBlq3Daw0rh8xoqinFW49zxdqP/AE7kde3gnrjxuoU/4MNZ4vRmoKcZRyruBvTFGLsRP5dHdj9KOuPR21tcozHB5rl1nMMvxFvEYa/TFdu5RO8TH7fB2kzhcRFynKeFxXWXQdejMRM0R+irg/DaAZjWQBQAAABUAFAAAAAAAHP691Zl+j8gu5ljauVcn4OHsRO1V652oj/ee1DzXVFNMzK9YsXMRci3bjOZcPxidaUZLkH8HcDfj8IZhRtd5M9NqzO8TP8Ae6YjwcpWqZ3nd9LUWcY7P86xObZjd90xGIrmqqe1EdqmO5ERtEPnIK9em5XtS7joHRVOjMLFr5p35nr9ABaTYAAAAAA5x0bnFy3zozSPy9/2fWyHsHgPJrfsw3WlkPYPAeTW/ZhuvFfGlmYXkKOyPIAUXwAAAB68ATPwJcKlOWWrOnNSX/8Ao4nk4XF1z/Ex/Rr/AEe5Pa8XVYO3XRcoproqiqmqN4mJ3iYUW7aRODLhTzXSfIy/GU1ZjlG8RFmqqeXZj9CZ9nq8TOw+M2I2a+BoGsWqXt5nE4OP1c8dPYtOPiaT1TkeqMFzvJsdRfiNvdLc/BuW57lVM9MfZPafaStNUVRnDmN2zcs1zRcpmJjpegKrQAAAAAAAAD5GqdSZLpnL5xuc463hqOnkUz01XJ7lMdcypVVFMZyuWrVd2qKLcZzPQ+tvG26C+GjhXiq3e07pXFb8qJoxWOtzvG3bptzH11ejuuV4UOFnM9UU3Muymm5luVVdFVO8e636f05jqif6MeeZRp09tF4nGbcbNDperuqPspjEYzh5qfy8eAwHQopyAAmQAVStxX/j/jfou595bWWVp4r/AMf8b9F3PvLayyZwXIw41rp8Tq7IAGW1IAAaGoewOYeS3fYlvtDUPYHMPJbvsS818WV/D8pT2wpEA12X0TRxYAB6AAAAAAAAAAAAAAAAHfcEvCNjtGY3muIivF5Peq3vWd+m1Mz+XR4e7Hb8DgRWmqaZzhi4zBWcbam1ejOJXgyTNMvzrLLOZ5XireJwt+nlUXKPsmOuJ8E9Lc2U50LrPPNHY+b+V4jexcq3v4a5027seLtTt24WR4P+EvT2rrdFm1d5lmM9FWEv1RFUz+jPVV5unuxCZsYum5GU70uQab1XxGjpm5bjat9PPHa7UBlNXABQAAAAAAAAH5rqpopmqqqmmIjeZmdoiEV8IvDJlGS0XcDp+KMzzCPg+6x02LU+GY/K8UdHhhbuXqLcZ1M7A6OxOOuRbsU5+Udrtde6vyfR2U1Y3Mr292d4sYaP4y9Vt1RHa8M9UehVXXGrM01fnVzMsyr2iOixYpn4FmnuR/vPbfO1BnOZZ9ml3Ms1xdzFYm511VT0Ux2oiO1HghoQiL+Im5vczrur+rdnRUbdX6rk8M9HYd14DF4WzcAAqqAAAAAAOcdG5xct86M0j8vf9n1sh7B4Dya37MN1pZD2DwHk1v2YbrxXxpZmF5CjsjyAFF8AAAAAAABtZZmGNyzG0YzAYq7hsRbnem5armmqPPHaS3o7h1zPB0UYbUmBpzC1G0e72Nrd3x8n8mqfFshol7t3a7c50yjsfonCY+nK/RE9fP8AyuBprhF0dn/IowmdWLV+roixiJ9yr37m1XX5t3V7xPVMT4lFNn1sm1NqDJ6onLM4xuEinqot3qoo9XfZm0Y+Yj9UNKxeoVFUzVh7uXVP59F1hVjLeGjXmFp5N3HYXGR/8+Gp39NPJfdwnD5n9O04vJcuvzvvVNFVdG/d65lkRjrcoG7qXpKjixFXZP5yWKEC2+MJfjf3TSturucnHTH/AAl7c4wl/kz7lpS3TPbmrHzMbeL3OHqMZannY3ulpX/H4x+U8ivGL4f86r6cLkOX2qu1Ndyuvb0bPhZhw1a5xUT7jicFgt+r3DDRO3r8p5nHWoZFrUvSdfGiI7Z/Ga0czEdcuW1Jwh6PyCmqMdneHrvR/wChh591ub9yYp6vPsqvnuq9SZ1yozPO8diKao2qoqvTyJ/ux0Pi7zM9LHrx8zH6YT2D1BjOJxF3uj8z+E06y4ecwxPLw+mcBTg6d5jnOJ2rudXXFPVE+PdEWcZpmGb46rHZnjL+LxFf5Vy7XNU+KN+qPA09hh13a65/VLdMBofB6PjKxRET08/8gC1wpPIAVAAAAEpcWW/atcId63crppqv5dct295/Kq5dFW3opmfMsyozh717D36b2HvXLN2id6a7dU01Uz3YmH1/4W6s/rRnn+YXf/JnYfFxao2Zho+n9Va9JYr29uuI3o4VzxTD+F2q/wCs+ef5hd/afwu1X/WfPP8AMLv7V/d9PQhPcLE/5Y8VzxTD+F2q/wCs+ef5hd/afwu1X/WfPP8AMLv7Td9PQe4WJ/yx4rnvm6qxFnDaazK9fuUW7dOFuTVVXVtEfBlUL+F2q/6z55/mF39rXx+oM+zHDzhswzzNMZh56arV/F13KJ7nRM7PNWPpmMslyzqHfpuU1VXIyiet8sBGOnRGUZAAqAAAAAAAAAAAAAAAAAA/RFVVNUVUVTTVE7xMT0wApMZ8KRtFcMGqMipow+PrpzjCUxtyMRVybsR3IudM+mJTBpjhg0bnFNFGIxtWV4irom3i45NMT2/hx8HbxzCrMPNmRbxVy3wS1rSGqmAxkzVls1Tzx+OBeXDYmxibVN7DXrV61VG9NduuKon0Myj+V5nmOV3pvZbj8Vgqp239wuzRv6JdflfCzrrAbR+GOdUR/NxFmiv69t/rZlOkKeeGo4jUHE0znZuRMdecflbEVxwXDzqe3P8A1WWZZe/sRXR/ymO4+la4wWLiKYu6XsVxt8Lk4uad58HwJ2XYxtrpRNWp+lKZyiiJ74T4IIq4wVfJmKdJUxO3RM5hvEf/AI2tf4wGZTTtY03hLc9vlYiqqPREQrOMtRzvNOqGlquG3l3x+VgBWfHcOusr3Rh7GVYWntcmxVVP+qqY+pzOccJOt80iqMTqHF26auunDzFmP9EQtzj7ccDPsajaQrn9cxT3rW5zneT5NY93zbM8Jgre3RN67FO/i360a6o4dNOYDlWsjwt/N7/VFfTatRPjmN580edXK/ev4i7N3EXrl67V01V3KpqqnxzPS/EQxrmOrq3qd5seC1HwtqYnEVTXPRwR/e91uteEPVGqt7eOx3uGFmejC4bei15433q88y5OX5fph1VTVOcy3HD4WzhaIt2qYiOp+QFF/LMAHoAAAAAAAAc46Nzi5b50ZpH5e/7PrZD2DwHk1v2YbrSyHsHgPJrfsw3XivjSzMLyFHZHkAKL4AAAAAAAAAAAAAAAAAD14AAAAAAAAAAAAAPR4A9HgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA5x0bnFy3zozSPy9/2fWyHsHgPJrfsw3WlkPYPAeTW/ZhuvFfGlmYXkKOyPIAUXwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABzjo3OLlvnRmkfl7/s+tkPYPAeTW/ZhutLIeweA8mt+zDdeK+NLMwvIUdkeQAovgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADnHRucXLfOjNI/L3/AGfWyHsHgPJrfsw3WlkPYPAeTW/ZhuvFfGlmYXkKOyPIAUXwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABzjo3OLlvnRmkfl7/ALPrZD2DwHk1v2YbrSyHsHgPJrfsw3XivjSzMLyFHZHkAKL4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA5x0bnFy3zozSPy9/2fV07XFen8urjqqwtqY9SG85zg2xtOM0lhY5W9djezX4Np6P9Mw6TZS7TNNcwu6Mv038Hau08E0x5PAHhnAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADmPd7HfrfrQ6DMsVbwOX4jGXfyLNuq5PmjdBH4Ux//ALipl4WxNyJlp+tGm7ejardExnM5z5Om4K86pwGb1ZdiK+TYxm0UzPVTcjq9PV6Esq6RMxMTEzEx1TCW9Aast5th6MBj7kU5hRG1Mz/60RHXH6Xdjz+LIxtic/aU96D1I07RFP8A4+/Vl+2e3hp/H8dDsJeAjHTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHxdWaiwmQYH3S7MXMTXH4mzE9NU92e5HhVppmqYpiFjE4m1hbVV69VlTHDLnuFrOqbGAoyazX+NxG1d7btURPRHnmPq8KL2xmOMxGYY27jMVcm5eu1cqqqf/vU10/YtRao2XBtO6Vq0pjKr88HBEdER/c565HtFVVFcV0VTTVTO8TE7TEvBeQ/A7zTPCFfw1FOGzm3VibcdEX6NvdI8cdVXj6J8bu8s1DkuZUxOEzGxVVP8yqrk1+rPSggYd3A265zjebjo3XXH4OmKLmVymOnh/n85rFiGdMfk2v7NX2y6Jg14TZnLNu+E1r3Rai57LLP/wCvRIgjseNzdbK94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokQR2G5us94/p+PokRp5hmuW5fTM43HYext2q7kRPo65Rrnv8AFUedxS/awMV78yg9J673MLVsW7MZ9Mz9so80mah4RcPboqs5LZm7X1e73adqY8VPXPn2R1jsXicdiq8VjL9d69XO9VdU9P8A+o8DAJC1YotcWHP9KabxmlKonEVb0cERvRHd953wBeRL/9k=" alt="JPC" style="height:44px;width:auto;border-radius:6px;flex-shrink:0;">
           <div class="topbar-title">Dashboard HRD JPC — Sistem Roster &amp; Cuti</div>
         </div>
-        <div class="clock" id="clock"></div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span id="sync-indicator" style="font-size:11px;font-weight:700;color:#00e676;letter-spacing:0.5px;">🔄 Memuat...</span>
+          <div class="clock" id="clock"></div>
+        </div>
       </div>
       <!-- RUNNING TEXT -->
       <div class="running-text-wrap">
@@ -340,11 +398,11 @@
           <span>= Cuti berakhir dalam &lt; 7 hari. Segera proses perpanjangan atau kembali kerja.</span>
         </div>
         <!-- INFO SUMBER DATA -->
-        <div style="display:flex;gap:10px;align-items:center;padding:8px 14px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:10px;margin-bottom:16px;font-size:11px;flex-wrap:wrap;">
-          <span style="color:#5a6278;font-weight:700;letter-spacing:0.5px;">ℹ️ SUMBER DATA:</span>
-          <span style="color:#f39c12;">● Sedang Cuti</span><span style="color:#5a6278;">→ dari <b style="color:#8892a4;">Data Karyawan</b> (roster = Cuti)</span>
-          <span style="color:#e74c3c;margin-left:10px;">● Cuti Akan Berakhir</span><span style="color:#5a6278;">→ Masa cuti ≤ 7 hari tersisa</span>
-          <span style="color:#14b8a6;margin-left:10px;">● Akan Cuti</span><span style="color:#5a6278;">→ Estimasi mulai cuti ≤ 14 hari lagi</span>
+        <div style="display:flex;gap:10px;align-items:center;padding:8px 14px;background:rgba(0,61,122,0.04);border:1px solid rgba(0,61,122,0.1);border-radius:10px;margin-bottom:16px;font-size:11px;flex-wrap:wrap;">
+          <span style="color:var(--navy);font-weight:700;letter-spacing:0.5px;">ℹ️ SUMBER DATA:</span>
+          <span style="color:#f39c12;">● Sedang Cuti</span><span style="color:var(--text-muted);">→ dari <b style="color:#8892a4;">Data Karyawan</b> (roster = Cuti)</span>
+          <span style="color:#e74c3c;margin-left:10px;">● Cuti Akan Berakhir</span><span style="color:var(--text-muted);">→ Masa cuti ≤ 7 hari tersisa</span>
+          <span style="color:#14b8a6;margin-left:10px;">● Akan Cuti</span><span style="color:var(--text-muted);">→ Estimasi mulai cuti ≤ 14 hari lagi</span>
         </div>
         <div class="table-card">
           <div class="table-header">
@@ -450,7 +508,7 @@
           <button class="btn-save btn-save-gsheet" onclick="openGSheetModal('attendance')"><span class="save-icon">📋</span> Kirim ke Google Sheets</button>
           <div class="field" style="margin-left:auto;">
             <label style="font-size:11px;color:var(--text-muted);">Filter Bulan</label>
-            <input type="month" id="att-month-filter" style="background:#0a0a0f;border:1px solid var(--orange-border);border-radius:8px;padding:6px 10px;color:var(--orange-light);font-size:12px;outline:none;" onchange="renderAttendance()">
+            <input type="month" id="att-month-filter" style="background:#fff;border:1px solid rgba(0,61,122,0.2);border-radius:8px;padding:6px 10px;color:var(--navy);font-size:12px;outline:none;" onchange="renderAttendance()">
           </div>
         </div>
 
@@ -476,8 +534,8 @@
             <table class="att-bulk-table" id="att-bulk-table">
               <thead>
                 <tr>
-                  <th style="min-width:180px;position:sticky;top:0;left:0;background:#0d0d14;z-index:3;">Nama</th>
-                  <th style="min-width:100px;position:sticky;top:0;left:180px;background:#0d0d14;z-index:3;">No Reg</th>
+                  <th style="min-width:180px;position:sticky;top:0;left:0;background:#eef1f8;z-index:3;color:var(--navy);">Nama</th>
+                  <th style="min-width:100px;position:sticky;top:0;left:180px;background:#eef1f8;z-index:3;color:var(--navy);">No Reg</th>
                   <th style="min-width:180px;">Jabatan</th>
                   <th style="min-width:130px;">Status Absensi</th>
                   <th style="min-width:120px;">Keterangan</th>
@@ -558,7 +616,7 @@
         <!-- ===== DATABASE KARYAWAN TABLE ===== -->
         <div class="table-card" style="margin-top:32px;">
           <div class="table-header">
-            <div class="table-title" style="font-size:16px;color:var(--orange);font-weight:700;">&#128101; Database Karyawan</div>
+            <div class="table-title" style="font-size:16px;color:var(--navy);font-weight:700;">&#128101; Database Karyawan</div>
             <input class="search-box" placeholder="Cari nama / no reg..." oninput="filterDbTable(this.value)" id="search-db" style="width:240px;">
           </div>
           <div style="overflow-x:auto;">
@@ -578,9 +636,9 @@
         <!-- ===== PRESENTASI KEHADIRAN TABLE ===== -->
         <div class="table-card" style="margin-top:32px;margin-bottom:0;">
           <div class="table-header">
-            <div class="table-title" style="font-size:16px;color:var(--orange);font-weight:700;">&#128200; Presentasi Kehadiran Karyawan</div>
+            <div class="table-title" style="font-size:16px;color:var(--navy);font-weight:700;">&#128200; Presentasi Kehadiran Karyawan</div>
             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-              <input type="month" id="att-month-pres" style="background:#0a0a0f;border:1px solid var(--orange-border);border-radius:8px;padding:6px 12px;color:var(--orange-light);font-size:12px;outline:none;">
+              <input type="month" id="att-month-pres" style="background:#fff;border:1px solid rgba(0,61,122,0.2);border-radius:8px;padding:6px 12px;color:var(--navy);font-size:12px;outline:none;">
               <button class="btn-add" onclick="renderPresenceTable()" style="padding:6px 14px;font-size:12px;">Tampilkan</button>
               <input class="search-box" placeholder="Cari nama..." oninput="filterPresTable(this.value)" id="search-pres" style="width:180px;">
             </div>
@@ -590,12 +648,12 @@
               <thead>
                 <tr>
                   <th>No</th><th>No Reg</th><th>Nama</th><th>Jabatan</th>
-                  <th style="color:var(--green)">Hadir</th>
-                  <th style="color:#ffd700">Sakit</th>
-                  <th style="color:#4fc3f7">Ijin</th>
-                  <th style="color:var(--orange)">Cuti</th>
+                  <th style="color:#00875a">Hadir</th>
+                  <th style="color:#d4891a">Sakit</th>
+                  <th style="color:#0056a8">Ijin</th>
+                  <th style="color:var(--gold-dark)">Cuti</th>
                   <th style="color:var(--red)">Absen</th>
-                  <th style="color:#888">Off</th>
+                  <th style="color:#7a8ba8">Off</th>
                   <th>Total Masuk</th>
                   <th>Total Hari</th>
                   <th>Presentasi (%)</th>
@@ -607,7 +665,7 @@
             </table>
           </div>
           <div id="pres-summary" style="padding:12px 20px 16px;font-size:12px;color:var(--text-muted);">
-            <span id="pres-avg" style="color:var(--orange);font-weight:700;"></span>
+            <span id="pres-avg" style="color:var(--navy);font-weight:700;"></span>
           </div>
         </div>
       </div>
@@ -621,33 +679,33 @@
           <div class="form-title">&#128200; Presentasi Kehadiran Karyawan Per Bulan</div>
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;line-height:1.7;">
             &#9432; <b>Aturan Perhitungan:</b> Periode dihitung dari <b>tanggal 21 bulan sebelumnya s/d 20 bulan berjalan</b>.<br>
-            &#9989; <b>Dianggap Hadir:</b> Status <span style="color:var(--green)">Hadir</span> + <span style="color:#ffd700">Sakit</span> + <span style="color:var(--orange)">Cuti</span> → <u>tidak mengurangi presentasi</u>.<br>
-            &#10060; <b>Tidak Hadir:</b> Status <span style="color:#4fc3f7">Ijin</span> + <span style="color:var(--red)">Absen/Alpha</span> + <span style="color:#888">Off</span> → mengurangi presentasi.
+            &#9989; <b>Dianggap Hadir:</b> Status <span style="color:#00875a">Hadir</span> + <span style="color:#d4891a">Sakit</span> + <span style="color:var(--gold-dark)">Cuti</span> → <u>tidak mengurangi presentasi</u>.<br>
+            &#10060; <b>Tidak Hadir:</b> Status <span style="color:#0056a8">Ijin</span> + <span style="color:var(--red)">Absen/Alpha</span> + <span style="color:#7a8ba8">Off</span> → mengurangi presentasi.
           </div>
           <div style="display:flex;gap:12px;align-items:end;flex-wrap:wrap;">
             <div class="field">
               <label>Pilih Bulan (Periode 21 bln lalu – 20 bln ini)</label>
-              <input type="month" id="monthly-month" style="background:#0a0a0f;border:1px solid var(--orange-border);border-radius:8px;padding:10px 12px;color:var(--orange-light);font-size:13px;outline:none;">
+              <input type="month" id="monthly-month" style="background:#fff;border:1px solid rgba(0,61,122,0.2);border-radius:8px;padding:10px 12px;color:var(--navy);font-size:13px;outline:none;">
             </div>
             <button class="btn-add" onclick="renderMonthlyPage()">&#9654; Tampilkan</button>
             <input class="search-box" placeholder="Cari nama / no reg..." oninput="filterMonthlyTable(this.value)" style="width:220px;margin-bottom:0;">
           </div>
-          <div id="monthly-period-info" style="margin-top:12px;font-size:13px;color:var(--blue);font-weight:600;"></div>
+          <div id="monthly-period-info" style="margin-top:12px;font-size:13px;color:var(--navy);font-weight:600;"></div>
         </div>
 
         <!-- Summary cards -->
         <div id="monthly-summary-cards" style="display:none;">
           <div class="stats-row" style="grid-template-columns:repeat(5,1fr);margin-bottom:20px;">
             <div class="stat-card">
-              <div class="stat-num" id="ms-total" style="color:var(--orange)">0</div>
+              <div class="stat-num" id="ms-total" style="color:var(--gold-dark)">0</div>
               <div class="stat-label">Total Karyawan</div>
             </div>
             <div class="stat-card">
-              <div class="stat-num" id="ms-avg" style="color:var(--green)">0%</div>
+              <div class="stat-num" id="ms-avg" style="color:#00875a">0%</div>
               <div class="stat-label">Rata-rata Kehadiran</div>
             </div>
             <div class="stat-card">
-              <div class="stat-num" id="ms-perfect" style="color:#ffd700">0</div>
+              <div class="stat-num" id="ms-perfect" style="color:#d4891a">0</div>
               <div class="stat-label">Kehadiran 100%</div>
             </div>
             <div class="stat-card">
@@ -685,12 +743,12 @@
                   <th>No Reg</th>
                   <th>Nama</th>
                   <th>Jabatan</th>
-                  <th style="color:var(--green)">Hadir</th>
-                  <th style="color:#ffd700">Sakit</th>
-                  <th style="color:var(--orange)">Cuti</th>
-                  <th style="color:#4fc3f7">Ijin</th>
+                  <th style="color:#00875a">Hadir</th>
+                  <th style="color:#d4891a">Sakit</th>
+                  <th style="color:var(--gold-dark)">Cuti</th>
+                  <th style="color:#0056a8">Ijin</th>
                   <th style="color:var(--red)">Absen</th>
-                  <th style="color:#888">Off</th>
+                  <th style="color:#7a8ba8">Off</th>
                   <th>Total Masuk*</th>
                   <th>Hari Kerja</th>
                   <th>Presentasi</th>
@@ -727,10 +785,10 @@
     <div class="modal-title" style="color:#4fc3f7;font-size:15px;">📋 Kirim ke Google Sheets</div>
 
     <!-- Tab navigasi -->
-    <div style="display:flex;gap:4px;margin-bottom:14px;background:#0a0a0f;border-radius:8px;padding:4px;">
+    <div style="display:flex;gap:4px;margin-bottom:14px;background:#eef1f8;border-radius:8px;padding:4px;">
       <button id="gs-tab-send" onclick="gsTab('send')" style="flex:1;padding:7px;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;background:#4fc3f7;color:#000;transition:all 0.2s;">🚀 Kirim Data</button>
       <button id="gs-tab-load" onclick="gsTab('load')" style="flex:1;padding:7px;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:#5a6278;transition:all 0.2s;">📥 Load Data</button>
-      <button id="gs-tab-script" onclick="gsTab('script')" style="flex:1;padding:7px;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:#5a6278;transition:all 0.2s;">📜 Script</button>
+      <button id="gs-tab-script" onclick="gsTab('script')" style="display:none;"></button>
     </div>
 
     <!-- Panel: Kirim Data -->
@@ -743,11 +801,11 @@
 
       <div class="field" style="margin-bottom:10px;">
         <label>URL Web App Google Apps Script</label>
-        <input type="text" id="gsheet-url" placeholder="https://script.google.com/macros/s/..." style="width:100%;background:#0a0a0f;border:1px solid rgba(79,195,247,0.3);border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;outline:none;">
+        <input type="text" id="gsheet-url" placeholder="https://script.google.com/macros/s/..." style="width:100%;background:#0a0a0f;border:1px solid rgba(79,195,247,0.3);border-radius:8px;padding:9px 12px;color:var(--navy);font-size:13px;outline:none;">
       </div>
       <div class="field" style="margin-bottom:10px;">
         <label>Nama Sheet Tujuan</label>
-        <input type="text" id="gsheet-sheetname" placeholder="Contoh: Absensi_April2026" style="width:100%;background:#0a0a0f;border:1px solid rgba(79,195,247,0.3);border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;outline:none;">
+        <input type="text" id="gsheet-sheetname" placeholder="Contoh: Absensi_April2026" style="width:100%;background:#0a0a0f;border:1px solid rgba(79,195,247,0.3);border-radius:8px;padding:9px 12px;color:var(--navy);font-size:13px;outline:none;">
       </div>
       <div class="field" style="margin-bottom:14px;">
         <label>Mode Pengiriman</label>
@@ -775,20 +833,20 @@
     <div id="gs-panel-load" style="display:none;">
       <div class="gsheet-info" style="margin-bottom:12px;background:rgba(0,230,118,0.06);border-color:rgba(0,230,118,0.3);">
         <strong style="color:#00e676;">📥 Load & Sinkronisasi Data dari Google Sheet</strong><br>
-        <span style="color:#9ca3af;">Data dari Google Sheet akan <b style="color:#fff;">menggantikan</b> data lokal browser ini. Gunakan ini untuk sinkronisasi antar laptop/device.</span>
+        <span style="color:#9ca3af;">Data dari Google Sheet akan <b style="color:var(--navy);">menggantikan</b> data lokal browser ini. Gunakan ini untuk sinkronisasi antar laptop/device.</span>
       </div>
       <div class="field" style="margin-bottom:10px;">
         <label>URL Web App Google Apps Script</label>
-        <input type="text" id="gsheet-url-load" placeholder="https://script.google.com/macros/s/..." style="width:100%;background:#0a0a0f;border:1px solid rgba(0,230,118,0.3);border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;outline:none;">
+        <input type="text" id="gsheet-url-load" placeholder="https://script.google.com/macros/s/..." style="width:100%;background:#0a0a0f;border:1px solid rgba(0,230,118,0.3);border-radius:8px;padding:9px 12px;color:var(--navy);font-size:13px;outline:none;">
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
         <div class="field">
           <label style="font-size:11px;">Sheet Data Karyawan</label>
-          <input type="text" id="load-sheet-emp" value="Roster_Karyawan" style="width:100%;background:#0a0a0f;border:1px solid rgba(0,230,118,0.2);border-radius:8px;padding:8px 10px;color:#fff;font-size:12px;outline:none;">
+          <input type="text" id="load-sheet-emp" value="Roster_Karyawan" style="width:100%;background:#0a0a0f;border:1px solid rgba(0,230,118,0.2);border-radius:8px;padding:8px 10px;color:var(--navy);font-size:12px;outline:none;">
         </div>
         <div class="field">
           <label style="font-size:11px;">Sheet Absensi</label>
-          <input type="text" id="load-sheet-att" value="Absensi" style="width:100%;background:#0a0a0f;border:1px solid rgba(0,230,118,0.2);border-radius:8px;padding:8px 10px;color:#fff;font-size:12px;outline:none;">
+          <input type="text" id="load-sheet-att" value="Absensi" style="width:100%;background:#0a0a0f;border:1px solid rgba(0,230,118,0.2);border-radius:8px;padding:8px 10px;color:var(--navy);font-size:12px;outline:none;">
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:12px;">
@@ -912,6 +970,8 @@ function doGet(e) {
       </div>
     </div>
   </div>
+</div>
+<!-- end main-app -->
 </div>
 
 <!-- Toast -->
@@ -1135,6 +1195,125 @@ function fmt(d) {
   return d.toLocaleDateString('id-ID', {day:'2-digit',month:'short',year:'numeric'});
 }
 
+// ========== AUTO SYNC CONFIG ==========
+const SYNC_URL = 'https://script.google.com/macros/s/AKfycbxXn6X64vGZG0YpZHHqSvLbbENHEDwQSviAoQu3h_Z4mhjXLrHqR13BhTSCeqss5Nw7/exec';
+const SHEET_EMP = 'Roster_Karyawan';
+const SHEET_ATT = 'ABSENSI_ROSTER CUTI';
+let isSyncing = false;
+
+// ── AUTO KIRIM ke GSheet (background, tidak ganggu UI) ─────────────
+async function autoSendToGSheet(target) {
+  if (!SYNC_URL) return;
+  const ts = nowStamp();
+  let data = [];
+  let sheetName = '';
+
+  if (target === 'employees') {
+    sheetName = SHEET_EMP;
+    data = [['Tgl Export','No','No Reg','Nama','Jabatan','Level','Status','Tgl Mulai','Est. Cuti','Selesai Cuti']];
+    const sorted = [...employees].sort((a,b) => (a.startDate||'').localeCompare(b.startDate||''));
+    sorted.forEach((emp, i) => {
+      const lv = getLevel(emp.position);
+      const { workEnd, leaveEnd, status } = calcDates(emp);
+      data.push([ts, i+1, emp.noreg||'-', emp.name, emp.position, lv.toUpperCase(), status, emp.startDate||'-', fmt(workEnd), fmt(leaveEnd)]);
+    });
+  } else {
+    sheetName = SHEET_ATT;
+    data = [['Tgl Export','Tanggal','No Reg','Nama','Status','Keterangan']];
+    const sortedAtt = [...attendance].sort((a,b) => {
+      const d = a.date.localeCompare(b.date);
+      return d !== 0 ? d : (a.nama||'').localeCompare(b.nama||'');
+    });
+    sortedAtt.forEach(a => {
+      const emp = employees.find(e=>e.id===a.empId);
+      const noreg = a.noreg || (emp?emp.noreg||'-':'-');
+      const nama  = a.nama  || (emp?emp.name:'?');
+      data.push([ts, a.date, noreg, nama, a.status, a.keterangan||'']);
+    });
+  }
+
+  try {
+    await fetch(SYNC_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ sheetName, data, mode: 'overwrite' })
+    });
+    showSyncIndicator('✅ Tersinkron', false);
+  } catch(e) {
+    showSyncIndicator('⚠️ Gagal sync', true);
+  }
+}
+
+// ── AUTO LOAD dari GSheet saat pertama buka ─────────────────────────
+async function autoLoadFromGSheet() {
+  if (!SYNC_URL || isSyncing) return;
+  isSyncing = true;
+  showSyncIndicator('🔄 Memuat data...', false);
+  let loaded = false;
+  try {
+    // Load employees
+    const r1 = await fetch(`${SYNC_URL}?action=read&sheet=${encodeURIComponent(SHEET_EMP)}&t=${Date.now()}`);
+    const j1 = await r1.json();
+    if (j1.status === 'ok' && j1.rows && j1.rows.length > 1) {
+      const parsed = j1.rows.slice(1).map((r,i) => ({
+        id: Date.now()+i,
+        noreg: String(r[2]||''),
+        name: String(r[3]||''),
+        position: String(r[4]||''),
+        roster: String(r[6]||'').toLowerCase()==='cuti'?'cuti':'kerja',
+        startDate: String(r[7]||''),
+      })).filter(e=>e.name);
+      if (parsed.length) {
+        employees = parsed;
+        localStorage.setItem('hrd_employees', JSON.stringify(employees));
+        loaded = true;
+      }
+    }
+    // Load attendance
+    const r2 = await fetch(`${SYNC_URL}?action=read&sheet=${encodeURIComponent(SHEET_ATT)}&t=${Date.now()}`);
+    const j2 = await r2.json();
+    if (j2.status === 'ok' && j2.rows && j2.rows.length > 1) {
+      const parsed = j2.rows.slice(1).map((r,i) => ({
+        id: Date.now()+i,
+        date: String(r[1]||''),
+        noreg: String(r[2]||''),
+        nama: String(r[3]||''),
+        status: String(r[4]||'Hadir'),
+        keterangan: String(r[5]||''),
+        attId: 'mp_'+String(r[2]||'').replace(/\s/g,'_'),
+      })).filter(a=>a.date&&a.nama);
+      if (parsed.length) {
+        attendance = parsed;
+        localStorage.setItem('hrd_attendance', JSON.stringify(attendance));
+        loaded = true;
+      }
+    }
+    if (loaded) {
+      renderDashboard();
+      showSyncIndicator('✅ Data terkini', false);
+    } else {
+      showSyncIndicator('📋 Data lokal', false);
+    }
+  } catch(e) {
+    showSyncIndicator('📋 Offline', true);
+  } finally {
+    isSyncing = false;
+  }
+}
+
+// ── INDIKATOR SYNC di topbar ────────────────────────────────────────
+function showSyncIndicator(msg, isError) {
+  let el = document.getElementById('sync-indicator');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = isError ? '#f5a623' : '#00e676';
+  clearTimeout(el._timer);
+  if (!isError && msg !== '📋 Data lokal' && msg !== '📋 Offline' && msg !== '✅ Data terkini') {
+    el._timer = setTimeout(() => { el.textContent = '✅ Tersinkron'; el.style.color='#00e676'; }, 3000);
+  }
+}
+
 function save() {
   localStorage.setItem('hrd_employees', JSON.stringify(employees));
   localStorage.setItem('hrd_attendance', JSON.stringify(attendance));
@@ -1186,11 +1365,16 @@ function addEmployee() {
   document.getElementById('inp-start').value='';
   renderEmployees(); renderDashboard(); updateAttEmpSelect();
   showToast('✅ Karyawan berhasil ditambahkan!');
+  autoSendToGSheet('employees');
 }
 
 function deleteEmployee(id) {
   if (!confirm('Hapus karyawan ini?')) return;
   employees = employees.filter(e => e.id !== id);
+  save(); renderEmployees(); renderDashboard(); updateAttEmpSelect();
+  showToast('✅ Karyawan dihapus.');
+  autoSendToGSheet('employees');
+  return;
   attendance = attendance.filter(a => a.empId !== id);
   save(); renderEmployees(); renderDashboard(); updateAttEmpSelect();
   showToast('🗑 Karyawan dihapus.');
@@ -1339,10 +1523,12 @@ function addAttendance() {
   attendance.push({ date, attId, nama, noreg, status, keterangan:'' });
   save(); renderAttendance();
   showToast('✅ Absensi tersimpan!');
+  autoSendToGSheet('attendance');
 }
 
 function deleteAtt(idx) {
   attendance.splice(idx,1); save(); renderAttendance();
+  autoSendToGSheet('attendance');
 }
 
 // ========== BULK ATTENDANCE ==========
@@ -1424,6 +1610,7 @@ function saveAttendanceBulk() {
   save();
   renderAttendance();
   showToast(`✅ ${saved} data absensi berhasil disimpan!`);
+  autoSendToGSheet('attendance');
 }
 
 function filterAttTable(q) {
@@ -1487,7 +1674,7 @@ function renderAttendance() {
     const ab = ea.filter(a=>a.status==='Absen').length;
     const c  = ea.filter(a=>a.status==='Cuti').length;
     const of = ea.filter(a=>a.status==='Off').length;
-    return `<tr><td style="color:var(--text-muted);font-size:11px;">${ref.noreg}</td><td class="name-cell">${ref.nama}</td><td style="color:var(--green)">${h}</td><td style="color:#ffd700">${sk}</td><td style="color:#4fc3f7">${ij}</td><td style="color:var(--red)">${ab}</td><td style="color:var(--orange)">${c}</td><td style="color:#888">${of}</td></tr>`;
+    return `<tr><td style="color:var(--text-muted);font-size:11px;">${ref.noreg}</td><td class="name-cell">${ref.nama}</td><td style="color:#00875a">${h}</td><td style="color:#d4891a">${sk}</td><td style="color:#0056a8">${ij}</td><td style="color:var(--red)">${ab}</td><td style="color:var(--gold-dark)">${c}</td><td style="color:#7a8ba8">${of}</td></tr>`;
   }).filter(Boolean).join('');
 
   renderAttendChart(monthAtt);
@@ -1499,6 +1686,7 @@ function renderAttendance() {
 function saveToLocal() {
   save();
   showToast('✅ Data berhasil disimpan ke Dashboard!');
+  autoSendToGSheet('employees');
 }
 
 function exportEmployeesToExcel() {
@@ -1821,11 +2009,11 @@ function renderLevelChart() {
     labels:['Karyawan','Staff','Management'],
     datasets:[{data:[counts.karyawan,counts.staff,counts.management],
       backgroundColor:['#e67e22','#c0392b','#1e8449'],
-      borderColor:'#111118',borderWidth:3,
+      borderColor:'#fff',borderWidth:3,
       hoverOffset:8}]
   },{responsive:true,maintainAspectRatio:false,
     cutout:'65%',
-    plugins:{legend:{position:'right',labels:{color:'#8892a4',font:{size:11},padding:12,boxWidth:12}},
+    plugins:{legend:{position:'right',labels:{color:'#7a8ba8',font:{size:11},padding:12,boxWidth:12}},
     tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw} org`}}}});
 }
 
@@ -1847,8 +2035,8 @@ function renderStatusChart(kerja, cuti) {
   },{responsive:true,maintainAspectRatio:false,
     indexAxis:'y',
     scales:{
-      x:{ticks:{color:'#5a6278',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.04)'}},
-      y:{ticks:{color:'#8892a4',font:{size:11},fontFamily:'Barlow Condensed'},grid:{display:false},border:{display:false}}
+      x:{ticks:{color:'#5a6278',font:{size:10}},grid:{color:'rgba(0,61,122,0.06)'},border:{color:'rgba(0,61,122,0.06)'}},
+      y:{ticks:{color:'#7a8ba8',font:{size:11},fontFamily:'Barlow Condensed'},grid:{display:false},border:{display:false}}
     },
     plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw} karyawan`}}}});
 }
@@ -1865,10 +2053,10 @@ function renderAttendChart(monthAtt) {
     ]
   },{responsive:true,maintainAspectRatio:false,
     scales:{
-      x:{ticks:{color:'#6b7280',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.06)'}},
-      y:{ticks:{color:'#6b7280',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.06)'}}
+      x:{ticks:{color:'#7a8ba8',font:{size:10}},grid:{color:'rgba(0,61,122,0.06)'},border:{color:'rgba(255,255,255,0.06)'}},
+      y:{ticks:{color:'#7a8ba8',font:{size:10}},grid:{color:'rgba(0,61,122,0.06)'},border:{color:'rgba(255,255,255,0.06)'}}
     },
-    plugins:{legend:{labels:{color:'#9ca3af',font:{size:11},boxWidth:12}}}});
+    plugins:{legend:{labels:{color:'#7a8ba8',font:{size:11},boxWidth:12}}}});
 }
 
 function renderReports() {
@@ -1919,12 +2107,12 @@ function renderReports() {
     responsive:true, maintainAspectRatio:false,
     interaction:{ mode:'index', intersect:false },
     scales:{
-      x:{ ticks:{color:'#6b7280',font:{size:10},maxRotation:30}, grid:{color:'rgba(255,255,255,0.04)'}, border:{color:'rgba(255,255,255,0.06)'} },
-      y:{ position:'left', ticks:{color:'#6b7280',font:{size:10},stepSize:1}, grid:{color:'rgba(255,255,255,0.04)'}, border:{color:'rgba(255,255,255,0.06)'}, title:{display:true,text:'Jumlah',color:'#5a6278',font:{size:9}} },
+      x:{ ticks:{color:'#7a8ba8',font:{size:10},maxRotation:30}, grid:{color:'rgba(0,61,122,0.06)'}, border:{color:'rgba(255,255,255,0.06)'} },
+      y:{ position:'left', ticks:{color:'#7a8ba8',font:{size:10},stepSize:1}, grid:{color:'rgba(0,61,122,0.06)'}, border:{color:'rgba(255,255,255,0.06)'}, title:{display:true,text:'Jumlah',color:'#5a6278',font:{size:9}} },
       y2:{ position:'right', ticks:{color:'#ff9500',font:{size:10}}, grid:{display:false}, border:{display:false}, title:{display:true,text:'Kumulatif',color:'#ff9500',font:{size:9}} }
     },
     plugins:{
-      legend:{ labels:{color:'#9ca3af',font:{size:11},boxWidth:12,usePointStyle:true} },
+      legend:{ labels:{color:'#7a8ba8',font:{size:11},boxWidth:12,usePointStyle:true} },
       tooltip:{ callbacks:{ label:c=> c.dataset.label+': '+c.raw } }
     }
   });
@@ -1974,11 +2162,11 @@ function renderReports() {
     responsive:true, maintainAspectRatio:false,
     interaction:{ mode:'index', intersect:false },
     scales:{
-      x:{ ticks:{color:'#6b7280',font:{size:10}}, grid:{color:'rgba(255,255,255,0.04)'}, border:{color:'rgba(255,255,255,0.06)'} },
-      y:{ ticks:{color:'#6b7280',font:{size:10}}, grid:{color:'rgba(255,255,255,0.04)'}, border:{color:'rgba(255,255,255,0.06)'} }
+      x:{ ticks:{color:'#7a8ba8',font:{size:10}}, grid:{color:'rgba(0,61,122,0.06)'}, border:{color:'rgba(255,255,255,0.06)'} },
+      y:{ ticks:{color:'#7a8ba8',font:{size:10}}, grid:{color:'rgba(0,61,122,0.06)'}, border:{color:'rgba(255,255,255,0.06)'} }
     },
     plugins:{
-      legend:{ labels:{color:'#9ca3af',font:{size:11},boxWidth:12,usePointStyle:true} },
+      legend:{ labels:{color:'#7a8ba8',font:{size:11},boxWidth:12,usePointStyle:true} },
       tooltip:{ callbacks:{ label:c=> c.dataset.label+': '+c.raw+' hari' } }
     }
   });
@@ -2026,11 +2214,11 @@ function renderReports() {
     responsive:true, maintainAspectRatio:false,
     interaction:{ mode:'index', intersect:false },
     scales:{
-      x:{ stacked:true, ticks:{color:'#6b7280',font:{size:10}}, grid:{color:'rgba(255,255,255,0.04)'}, border:{color:'rgba(255,255,255,0.06)'} },
-      y:{ stacked:false, ticks:{color:'#6b7280',font:{size:10}}, grid:{color:'rgba(255,255,255,0.04)'}, border:{color:'rgba(255,255,255,0.06)'} }
+      x:{ stacked:true, ticks:{color:'#7a8ba8',font:{size:10}}, grid:{color:'rgba(0,61,122,0.06)'}, border:{color:'rgba(255,255,255,0.06)'} },
+      y:{ stacked:false, ticks:{color:'#7a8ba8',font:{size:10}}, grid:{color:'rgba(0,61,122,0.06)'}, border:{color:'rgba(255,255,255,0.06)'} }
     },
     plugins:{
-      legend:{ labels:{color:'#9ca3af',font:{size:11},boxWidth:12,usePointStyle:true} },
+      legend:{ labels:{color:'#7a8ba8',font:{size:11},boxWidth:12,usePointStyle:true} },
       tooltip:{ callbacks:{ label:c=> c.dataset.label+': '+c.raw+' hari' } }
     }
   });
@@ -2207,7 +2395,7 @@ function renderMonthlyPage() {
   tbody.innerHTML = rows.map((r, i) => {
     const pctColor = r.pct >= 90 ? 'var(--green)' : r.pct >= 75 ? '#ffd700' : r.pct > 0 ? 'var(--red)' : 'var(--text-muted)';
     const pctBar = `<div style="display:flex;align-items:center;gap:8px;">
-      <div style="flex:1;background:#222;border-radius:4px;height:8px;overflow:hidden;min-width:70px;">
+      <div style="flex:1;background:rgba(0,61,122,0.1);border-radius:4px;height:8px;overflow:hidden;min-width:70px;">
         <div style="height:100%;width:${r.pct}%;background:${pctColor};border-radius:4px;transition:width 0.6s;"></div>
       </div>
       <span style="font-size:13px;font-weight:800;color:${pctColor};min-width:44px;">${r.pct}%</span>
@@ -2257,8 +2445,8 @@ function renderMonthlyPage() {
   },{
     responsive:true,maintainAspectRatio:false,
     scales:{
-      x:{ticks:{color:'#6b7280',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.06)'}},
-      y:{ticks:{color:'#6b7280',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.06)'}}
+      x:{ticks:{color:'#7a8ba8',font:{size:10}},grid:{color:'rgba(0,61,122,0.06)'},border:{color:'rgba(255,255,255,0.06)'}},
+      y:{ticks:{color:'#7a8ba8',font:{size:10},stepSize:1},grid:{color:'rgba(0,61,122,0.06)'},border:{color:'rgba(255,255,255,0.06)'}}
     },
     plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+' karyawan'}}}
   });
@@ -2301,6 +2489,24 @@ document.getElementById('att-date').value = new Date().toISOString().split('T')[
 document.getElementById('att-date-bulk').value = new Date().toISOString().split('T')[0];
 document.getElementById('att-month-pres').value = new Date().toISOString().slice(0,7);
 document.getElementById('att-month-filter').value = new Date().toISOString().slice(0,7);
+
+// ── AUTO LOAD saat pertama buka ──────────────────────────────────────
+setTimeout(() => {
+  autoLoadFromGSheet().then(() => {
+    renderDashboard();
+    renderDbTable();
+    renderBulkAttTable();
+    updateAttEmpSelect();
+  });
+}, 1000);
+
+// ── AUTO REFRESH setiap 2 menit ──────────────────────────────────────
+setInterval(() => {
+  autoLoadFromGSheet().then(() => {
+    renderDashboard();
+    updateAttEmpSelect();
+  });
+}, 2 * 60 * 1000);
 </script>
 <script>
 // ── Service Worker Registration ──
@@ -2325,6 +2531,54 @@ if ("serviceWorker" in navigator) {
       })
       .catch(err => console.warn("[SW] Gagal register:", err));
   });
+}
+// ── LOGIN SYSTEM ─────────────────────────────────────────────────────
+const LOGIN_CREDENTIALS = [
+  { username: 'JPCKPC', password: 'JPCSPE' }
+];
+
+function doLogin() {
+  const user = (document.getElementById('login-user').value||'').trim();
+  const pass = (document.getElementById('login-pass').value||'').trim();
+  const btn  = document.getElementById('login-btn');
+  const err  = document.getElementById('login-error');
+
+  // Animasi loading
+  btn.innerHTML = '⏳ Memeriksa...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    const valid = LOGIN_CREDENTIALS.find(c => c.username === user && c.password === pass);
+    if (valid) {
+      err.style.display = 'none';
+      document.getElementById('login-screen').style.opacity = '0';
+      document.getElementById('login-screen').style.transition = 'opacity 0.4s';
+      setTimeout(() => {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-app').style.display = 'flex';
+        sessionStorage.setItem('hrd_logged_in', '1');
+      }, 400);
+    } else {
+      err.style.display = 'block';
+      btn.innerHTML = '🔐 Masuk';
+      btn.disabled = false;
+      document.getElementById('login-pass').value = '';
+      document.getElementById('login-pass').focus();
+    }
+  }, 600);
+}
+
+function togglePass() {
+  const p = document.getElementById('login-pass');
+  const e = document.getElementById('pass-eye');
+  if (p.type === 'password') { p.type = 'text'; e.textContent = '🙈'; }
+  else { p.type = 'password'; e.textContent = '👁️'; }
+}
+
+// Cek session — kalau sudah login sebelumnya langsung masuk
+if (sessionStorage.getItem('hrd_logged_in') === '1') {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'flex';
 }
 </script>
 </body>
