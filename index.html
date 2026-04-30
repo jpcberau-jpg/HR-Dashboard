@@ -801,7 +801,7 @@
 
       <div class="field" style="margin-bottom:10px;">
         <label>URL Web App Google Apps Script</label>
-        <input type="text" id="gsheet-url" placeholder="https://script.google.com/macros/s/..." style="width:100%;background:#0a0a0f;border:1px solid rgba(79,195,247,0.3);border-radius:8px;padding:9px 12px;color:var(--navy);font-size:13px;outline:none;">
+        <input type="text" id="gsheet-url" readonly value="https://script.google.com/macros/s/AKfycbw-OygOwPQaViq6HdsxSqLelRumQ-3_rYo3FYe58NZGOGcAr1fb4zo26rXxmUWEJKzq/exec" style="width:100%;background:rgba(0,180,100,0.06);border:1px solid rgba(0,200,120,0.4);border-radius:8px;padding:9px 12px;color:#00875a;font-size:11px;outline:none;cursor:default;font-family:monospace;">
       </div>
       <div class="field" style="margin-bottom:10px;">
         <label>Nama Sheet Tujuan</label>
@@ -837,7 +837,7 @@
       </div>
       <div class="field" style="margin-bottom:10px;">
         <label>URL Web App Google Apps Script</label>
-        <input type="text" id="gsheet-url-load" placeholder="https://script.google.com/macros/s/..." style="width:100%;background:#0a0a0f;border:1px solid rgba(0,230,118,0.3);border-radius:8px;padding:9px 12px;color:var(--navy);font-size:13px;outline:none;">
+        <input type="text" id="gsheet-url-load" readonly value="https://script.google.com/macros/s/AKfycbw-OygOwPQaViq6HdsxSqLelRumQ-3_rYo3FYe58NZGOGcAr1fb4zo26rXxmUWEJKzq/exec" style="width:100%;background:rgba(0,180,100,0.06);border:1px solid rgba(0,200,120,0.4);border-radius:8px;padding:9px 12px;color:#00875a;font-size:11px;outline:none;cursor:default;font-family:monospace;">
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
         <div class="field">
@@ -1167,16 +1167,38 @@ const LEAVE_DAYS = 14;
 function getLevel(pos) { return LEVEL_MAP[pos] || 'karyawan'; }
 function getWorkDays(pos) { return WORK_DAYS[getLevel(pos)] || 90; }
 
+function parseDate(val) {
+  if (val === null || val === undefined || val === '' || val === '-') return null;
+  if (val instanceof Date) return isNaN(val.getTime()) ? null : val;
+  const s = String(val).trim();
+  if (!s || s === '-') return null;
+  const num = Number(s.replace(/,/g, ''));
+  if (!isNaN(num) && s.replace(/[0-9.,eE+\-]/g,'') === '') {
+    if (num > 1000000000000) { const d = new Date(num); return isNaN(d.getTime())?null:d; }
+    if (num > 1 && num < 200000) { const d = new Date(Math.round((num-25569)*86400000)); return isNaN(d.getTime())?null:d; }
+  }
+  const dmy = s.match(/^(\d{1,2})[/\-](\d{1,2})[/\-](\d{4})$/);
+  if (dmy) { const d = new Date(parseInt(dmy[3]),parseInt(dmy[2])-1,parseInt(dmy[1])); return isNaN(d.getTime())?null:d; }
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+
 function calcDates(emp) {
-  const start = new Date(emp.startDate);
+  const start = parseDate(emp.startDate);
   const wd = getWorkDays(emp.position);
-  const workEnd = new Date(start);
-  workEnd.setDate(workEnd.getDate() + wd);
-  const leaveEnd = new Date(workEnd);
-  leaveEnd.setDate(leaveEnd.getDate() + LEAVE_DAYS);
+  let workEnd = null, leaveEnd = null;
+  if (start) {
+    workEnd = new Date(start); workEnd.setHours(0,0,0,0);
+    workEnd.setDate(workEnd.getDate() + wd);
+    leaveEnd = new Date(workEnd);
+    leaveEnd.setDate(leaveEnd.getDate() + LEAVE_DAYS);
+  }
   const now = new Date(); now.setHours(0,0,0,0);
   let status, daysLeft, pct;
-  if (emp.roster === 'kerja') {
+  if (!start) {
+    status = emp.roster === 'cuti' ? 'Cuti' : 'Kerja';
+    daysLeft = 0; pct = 0;
+  } else if (emp.roster === 'kerja') {
     const elapsed = Math.floor((now - start) / 86400000);
     daysLeft = Math.max(0, wd - elapsed);
     pct = Math.min(100, Math.round(elapsed / wd * 100));
@@ -1191,12 +1213,12 @@ function calcDates(emp) {
 }
 
 function fmt(d) {
-  if (!d) return '-';
+  if (!d || isNaN(d.getTime())) return '-';
   return d.toLocaleDateString('id-ID', {day:'2-digit',month:'short',year:'numeric'});
 }
 
 // ========== AUTO SYNC CONFIG ==========
-const SYNC_URL = 'https://script.google.com/macros/s/AKfycbxXn6X64vGZG0YpZHHqSvLbbENHEDwQSviAoQu3h_Z4mhjXLrHqR13BhTSCeqss5Nw7/exec';
+const SYNC_URL = 'https://script.google.com/macros/s/AKfycbw-OygOwPQaViq6HdsxSqLelRumQ-3_rYo3FYe58NZGOGcAr1fb4zo26rXxmUWEJKzq/exec';
 const SHEET_EMP = 'Roster_Karyawan';
 const SHEET_ATT = 'ABSENSI_ROSTER CUTI';
 let isSyncing = false;
@@ -1401,7 +1423,7 @@ function renderEmployees() {
       <td>${emp.position}</td>
       <td><span class="badge ${lvBadge}">${lv.toUpperCase()}</span></td>
       <td><span class="badge ${stBadge}">${status}</span></td>
-      <td>${fmt(new Date(emp.startDate))}</td>
+      <td>${fmt(parseDate(emp.startDate))}</td>
       <td>${fmt(workEnd)}</td>
       <td>${fmt(leaveEnd)}</td>
       <td><div class="days-bar"><div class="bar-wrap"><div class="bar-fill ${barColor}" style="width:${pct}%"></div></div><span class="days-num">${daysLeft}hr</span></div></td>
@@ -1487,7 +1509,7 @@ function showDetail(id) {
     <div class="info-item"><div class="info-label">Level</div><div class="info-val">${lv.toUpperCase()}</div></div>
     <div class="info-item"><div class="info-label">Roster Kerja</div><div class="info-val">${wd} hari</div></div>
     <div class="info-item"><div class="info-label">Cuti</div><div class="info-val">14 hari</div></div>
-    <div class="info-item"><div class="info-label">Mulai Periode</div><div class="info-val">${fmt(new Date(emp.startDate))}</div></div>
+    <div class="info-item"><div class="info-label">Mulai Periode</div><div class="info-val">${fmt(parseDate(emp.startDate))}</div></div>
     <div class="info-item"><div class="info-label">Status</div><div class="info-val" style="color:${emp.roster==='cuti'?'var(--orange)':'var(--green)'}">${status}</div></div>
     <div class="info-item"><div class="info-label">Estimasi Mulai Cuti</div><div class="info-val">${fmt(workEnd)}</div></div>
     <div class="info-item"><div class="info-label">Cuti Selesai</div><div class="info-val">${fmt(leaveEnd)}</div></div>
@@ -1807,8 +1829,9 @@ function exportFullReport() {
 function openGSheetModal(target) {
   currentGSheetTarget = target;
   document.getElementById('gsheet-modal').classList.add('open');
-  const url = localStorage.getItem('gsheet_url') || 'https://script.google.com/macros/s/AKfycbxXn6X64vGZG0YpZHHqSvLbbENHEDwQSviAoQu3h_Z4mhjXLrHqR13BhTSCeqss5Nw7/exec';
+  const url = 'https://script.google.com/macros/s/AKfycbw-OygOwPQaViq6HdsxSqLelRumQ-3_rYo3FYe58NZGOGcAr1fb4zo26rXxmUWEJKzq/exec';
   document.getElementById('gsheet-url').value = url;
+  localStorage.setItem('gsheet_url', url);
   // Auto-set nama sheet berdasarkan target + bulan
   const today = new Date();
   const bulan = today.toLocaleDateString('id-ID',{month:'long',year:'numeric'}).replace(' ','_');
@@ -1838,7 +1861,7 @@ function gsTab(tab) {
 async function loadFromGSheet() {
   const GSURL = document.getElementById('gsheet-url-load').value.trim() ||
                 document.getElementById('gsheet-url').value.trim() ||
-                'https://script.google.com/macros/s/AKfycbxXn6X64vGZG0YpZHHqSvLbbENHEDwQSviAoQu3h_Z4mhjXLrHqR13BhTSCeqss5Nw7/exec';
+                'https://script.google.com/macros/s/AKfycbw-OygOwPQaViq6HdsxSqLelRumQ-3_rYo3FYe58NZGOGcAr1fb4zo26rXxmUWEJKzq/exec';
   const sheetEmp = document.getElementById('load-sheet-emp').value.trim() || 'Roster_Karyawan';
   const sheetAtt = document.getElementById('load-sheet-att').value.trim() || 'Absensi';
   const doEmp = document.getElementById('load-emp').checked;
@@ -1923,7 +1946,7 @@ function nowStamp() {
   return d.toLocaleString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
 }
 
-const GSHEET_DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbxXn6X64vGZG0YpZHHqSvLbbENHEDwQSviAoQu3h_Z4mhjXLrHqR13BhTSCeqss5Nw7/exec';
+const GSHEET_DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbw-OygOwPQaViq6HdsxSqLelRumQ-3_rYo3FYe58NZGOGcAr1fb4zo26rXxmUWEJKzq/exec';
 async function sendToGSheet() {
   const url = document.getElementById('gsheet-url').value.trim();
   const sheetName = document.getElementById('gsheet-sheetname').value.trim() || 'Sheet1';
